@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this reconstruction, cite both this repository and the 2025 conference paper."
+title: "FX Sensitivity and Industry Return Prediction: Reconstruction and V2"
+type: software
+version: 0.1.0
+date-released: 2026-07-14
+authors:
+  - family-names: Lee
+    given-names: Minseong
+repository-code: "https://github.com/minster0422/fx-industry-return-prediction"
+preferred-citation:
+  type: conference-paper
+  title: "환율 민감도 기반 클러스터링과 동조지수를 이용한 산업별 월간 수익률 예측"
+  authors:
+    - family-names: 이
+      given-names: 민성
+    - family-names: 홍
+      given-names: 찬기
+    - family-names: 추
+      given-names: 민주
+    - family-names: 이
+      given-names: 석준
+    - family-names: 우
+      given-names: 지영
+  year: 2025
+  collection-title: 한국컴퓨터정보학회 학술발표논문집
+  volume: "33"
+  issue: "2"
+  pages: "959-961"
+  url: "https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12337990"

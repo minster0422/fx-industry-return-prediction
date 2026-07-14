@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fx-industry-return-prediction"
+version = "0.1.0"
+description = "Reconstruction and leakage-aware upgrade of a 2025 undergraduate FX-sensitivity and industry-return study"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Minseong Lee and the 2025 undergraduate project team" }
+]
+dependencies = [
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<4",
+  "scikit-learn>=1.5,<2",
+]
+
+[project.scripts]
+fx-research = "fx_research.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
