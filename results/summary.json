@@ -1,0 +1,40 @@
+{
+  "input": {
+    "rows": 24300,
+    "stocks": 50,
+    "industries": 10,
+    "trading_days": 486,
+    "start": "2023-05-03",
+    "end": "2025-04-30"
+  },
+  "clustering": {
+    "chosen_k_2025": 4,
+    "best_silhouette_k_in_python_port": 2,
+    "k4_silhouette": 0.34837694508462214
+  },
+  "association": {
+    "reported_rules": 10,
+    "rules_with_any_metric_delta_over_1e_6": 10
+  },
+  "legacy_mean_corr": {
+    "max_stock_lift": 1.0,
+    "pairs_at_or_above_1_4": 0,
+    "nonzero_stocks": 0
+  },
+  "prediction": {
+    "feature_month_start": "2024-05-01",
+    "feature_month_end": "2025-03-01",
+    "target_month_start": "2024-06-01",
+    "target_month_end": "2025-04-01",
+    "walk_forward_predictions": 110
+  },
+  "v2_proof_of_concept": {
+    "rf_base_rmse_all": 0.003712078260512169,
+    "rf_network_rmse_all": 0.0037009038212455375,
+    "network_relative_rmse_change_all": -0.003010291939558818,
+    "rf_base_rmse_latest6": 0.0038529170626249378,
+    "rf_network_rmse_latest6": 0.0038434514357332866,
+    "zero_rmse_all": 0.0035524994193399566,
+    "conclusion": "No material incremental value is established in the 24-month sample."
+  }
+}

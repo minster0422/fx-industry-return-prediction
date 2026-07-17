@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+.idea/
+.vscode/
+
+# The original market dataset is intentionally local-only until its
+# redistribution terms and source lineage are documented.
+data/raw/*
+!data/raw/.gitkeep
+
+# Temporary runs can be regenerated with the CLI.
+results/generated/
