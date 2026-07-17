@@ -1,0 +1,189 @@
+registry:
+  version: "0.1.0-feasibility"
+  checked_at: "2026-07-17"
+  timezone: "Asia/Seoul"
+  raw_payloads_committed: false
+  credentials:
+    KRX_API_KEY: "NOT_SET"
+    ECOS_API_KEY: "NOT_SET"
+  credential_values_recorded: false
+
+sources:
+  KRX_OPEN_API:
+    institution: "한국거래소"
+    service: "KRX Open API"
+    service_list_url: "https://openapi.krx.co.kr/contents/OPP/INFO/service/OPPINFO004.cmd"
+    usage_url: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO003.jsp"
+    terms_url: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp"
+    terms_effective_date: "2025-12-26"
+    schema_page_modified_at: "2026-01-16"
+    authentication_header_name: "AUTH_KEY"
+    authentication_environment_variable: "KRX_API_KEY"
+    authentication_status: "BLOCKED_CREDENTIAL"
+    daily_stock_trading:
+      service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=JvJFzlAENzZlPBDNGAWC"
+      coverage_start: "2010-01-04"
+      api_id: "stk_bydd_trd"
+      sample_endpoint_identifier: "/svc/sample/apis/sto/stk_bydd_trd"
+      production_endpoint_identifier: "/svc/apis/sto/stk_bydd_trd"
+      fields: "UNRESOLVED_01"
+      units: "UNRESOLVED_01"
+      corporate_action_adjustment: "UNRESOLVED_01"
+      publication_time: "UNRESOLVED_02"
+    kosdaq_daily_stock_trading:
+      service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=hZjGpkllgCBCWqeTsYFj"
+      api_id: "ksq_bydd_trd"
+      production_endpoint_identifier: "/svc/apis/sto/ksq_bydd_trd"
+      fields: "UNRESOLVED_01"
+      units: "UNRESOLVED_01"
+      corporate_action_adjustment: "UNRESOLVED_01"
+      publication_time: "UNRESOLVED_02"
+    kospi_index_daily:
+      service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES001_S2.cmd?BO_ID=EREKZauXnMmxyIlqzeDN"
+      coverage_start: "2010-01-04"
+      api_id: "kospi_dd_trd"
+      sample_endpoint_identifier: "/svc/sample/apis/idx/kospi_dd_trd"
+      production_endpoint_identifier: "/svc/apis/idx/kospi_dd_trd"
+      publication_time: "UNRESOLVED_02"
+    krx_index_daily:
+      service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES001_S2.cmd?BO_ID=SsgXTEspyJESKvyXZtCU"
+      api_id: "krx_dd_trd"
+      production_endpoint_identifier: "/svc/apis/idx/krx_dd_trd"
+      constituent_definition: "NOT_PROVIDED_BY_DAILY_INDEX_RESPONSE"
+    stock_basic_information:
+      kospi_service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=PiwgMdTwmsenXhmqqxuj"
+      kosdaq_service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=CifLHplnUFMgpHIMMPXs"
+      kospi_api_id: "stk_isu_base_info"
+      kosdaq_api_id: "ksq_isu_base_info"
+      kospi_production_endpoint_identifier: "/svc/apis/sto/stk_isu_base_info"
+      kosdaq_production_endpoint_identifier: "/svc/apis/sto/ksq_isu_base_info"
+    related_eod_distribution_spec:
+      official_url: "https://openapi.krx.co.kr/contents/OPP/DATA/OPPDATA002.jsp"
+      first_transmission_time: "16:00_KST"
+      second_transmission_time: "18:10_KST"
+      applies_to_open_api_publication_time: false
+      interpretation: "official distribution-product schedule only; not evidence of Open API availability"
+    redistribution:
+      third_party_provision_of_received_information: "PROHIBITED_BY_TERMS"
+      noncommercial_use_only: true
+      row_level_derived_output: "UNRESOLVED_06"
+
+  FSC_DATA_GO_KR_STOCK_PRICE_API:
+    institution: "금융위원회"
+    service: "금융위원회_주식시세정보"
+    official_url: "https://www.data.go.kr/data/15094808/openapi.do"
+    endpoint_identifier: "/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo"
+    page_modified_at: "2026-01-02"
+    coverage_start: "2020-01-01"
+    publication_time: "next_business_day_13:00_KST"
+    license_display: "이용허락범위 제한 없음"
+    adopted_as_primary: false
+    adoption_reason: "publication occurs after the registered same-day 18:30 forecast cutoff"
+    schema:
+      basDt: {type: "string", unit: "YYYYMMDD", meaning: "기준일자"}
+      srtnCd: {type: "string", unit: "6_digit_code", meaning: "단축코드"}
+      isinCd: {type: "string", unit: "code", meaning: "ISIN코드"}
+      itmsNm: {type: "string", unit: "text", meaning: "종목명"}
+      mrktCtg: {type: "string", unit: "category", meaning: "시장구분"}
+      clpr: {type: "string", unit: "KRW", meaning: "종가"}
+      fltRt: {type: "number", unit: "percent", meaning: "등락률"}
+      mkp: {type: "number", unit: "KRW", meaning: "시가"}
+      hipr: {type: "number", unit: "KRW", meaning: "고가"}
+      lopr: {type: "number", unit: "KRW", meaning: "저가"}
+      trqu: {type: "number", unit: "shares", meaning: "거래량"}
+      trPrc: {type: "number", unit: "KRW", meaning: "거래대금"}
+      lstgStCnt: {type: "number", unit: "shares", meaning: "상장주식수"}
+      mrktTotAmt: {type: "number", unit: "KRW", meaning: "시가총액"}
+    corporate_action_adjustment: "NOT_STATED_IN_OFFICIAL_SCHEMA"
+
+  FSC_DATA_GO_KR_STOCK_RIGHTS_SCHEDULE_API:
+    institution: "금융위원회"
+    service: "금융위원회_주식권리일정정보"
+    official_url: "https://www.data.go.kr/data/15059609/openapi.do"
+    page_modified_at: "2026-04-20"
+    publication_time: "next_business_day_13:00_KST"
+    license_display: "공공저작물 출처표시·상업적 이용금지; 제3자 권리 포함 가능"
+    relevant_event_types:
+      - "무상증자"
+      - "유상증자"
+      - "주식교환"
+      - "감자"
+    event_sample_status: "BLOCKED_CREDENTIAL_AND_ENDPOINT_NOT_REGISTERED_FOR_FEASIBILITY_CLI"
+
+  BOK_ECOS_OPEN_API:
+    institution: "한국은행"
+    service: "ECOS Open API"
+    official_url: "https://ecos.bok.or.kr/api/"
+    authentication_environment_variable: "ECOS_API_KEY"
+    authentication_status: "BLOCKED_CREDENTIAL_FOR_PRODUCTION"
+    public_sample_metadata_status: "VERIFIED"
+    endpoint_identifiers:
+      - "StatisticTableList"
+      - "StatisticItemList"
+      - "StatisticSearch"
+    statistic_table_code: "731Y001"
+    statistic_table_name: "3.1.1.1. 주요국 통화의 대원화환율"
+    frequency: "D"
+    primary_candidate:
+      pair: "USD_KRW"
+      item_code: "0000001"
+      item_name: "원/미국달러(매매기준율)"
+      unit: "원"
+      quote_direction: "KRW_per_1_USD"
+      meaning: "매매기준율"
+      start_date: "1964-05-04"
+      latest_date_observed_at_check: "2026-07-16"
+    supplementary_candidates:
+      EUR_KRW:
+        item_code: "0000003"
+        item_name: "원/유로"
+        unit: "원"
+        quote_direction: "KRW_per_1_EUR"
+        start_date: "1994-04-11"
+        latest_date_observed_at_check: "2026-07-16"
+      JPY_KRW:
+        item_code: "0000002"
+        item_name: "원/일본엔(100엔)"
+        unit: "원"
+        quote_direction: "KRW_per_100_JPY"
+        start_date: "1977-04-01"
+        latest_date_observed_at_check: "2026-07-16"
+      CNY_KRW:
+        item_code: "0000053"
+        item_name: "원/위안(매매기준율)"
+        unit: "원"
+        quote_direction: "KRW_per_1_CNY"
+        start_date: "2016-01-04"
+        latest_date_observed_at_check: "2026-07-16"
+    five_date_cross_check:
+      dates: ["2026-07-01", "2026-07-02", "2026-07-03", "2026-07-06", "2026-07-07"]
+      fields_compared: ["table_code", "item_code", "item_name", "unit", "date"]
+      result: "MATCH_5_OF_5_FOR_ALL_FOUR_ITEMS"
+      values_persisted: false
+    publication_time: "UNRESOLVED_03"
+    revision_policy: "UNRESOLVED_03"
+    missing_day_rule: "NO_FILL_FOR_DAILY_BETA; INNER_JOIN_ON_DATES_OBSERVED_IN_BOTH_FX_AND_MARKET_DATA"
+    redistribution:
+      official_copyright_url: "https://www.bok.or.kr/portal/main/contents.do?menuNo=200228"
+      row_level_raw_or_derived_output: "UNRESOLVED_06"
+
+storage_policy:
+  public_metadata_root: "data/metadata/"
+  local_raw_root: "data/feasibility_raw/"
+  local_private_mapping_root: "data/metadata/private/"
+  local_request_log_root: "data/metadata/api_logs/"
+  gitignored_paths:
+    - "data/raw/*"
+    - "data/feasibility_raw/"
+    - "data/metadata/private/"
+    - "data/metadata/api_logs/"
+    - ".env"
+    - ".env.*"
+
+feasibility_cli:
+  command: "python -m fx_research.v2_1_feasibility --config configs/v2_1_protocol.yaml --mode metadata"
+  modes: ["metadata", "schema_sample", "corporate_actions", "timestamp_once", "audit"]
+  sleeps_or_waits: false
+  timestamp_log: "data/metadata/api_logs/timestamp_observations.jsonl"
+  timestamp_log_committed: false
+  corporate_action_endpoint_status: "UNRESOLVED_OFFICIAL_SOURCE_ENDPOINT"

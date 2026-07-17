@@ -74,6 +74,20 @@ Python과 R의 Random Forest 구현 차이 때문에 예측 숫자를 완전히 
 
 V2는 완성된 투자모형이 아니라, 원래 아이디어를 검증 가능한 연구문제로 바꾸는 첫 기준선이다. 장기 데이터와 통계적 유의성 검정이 추가되어야 한다.
 
+### V2.1 현재 단계 — 사전등록 프로토콜 초안
+
+V2.1은 **아직 전체 데이터 수집·모델 학습·성능 평가 전**이다. 결과를 보기 전에 표본, 다음 달 산업 초과수익률 타깃, 60개월 rolling 학습창, M0~M4 비교, paired MAE, month-block bootstrap, 실패 판정 규칙을 [`docs/V2_1_PROTOCOL.md`](docs/V2_1_PROTOCOL.md)와 [`configs/v2_1_protocol.yaml`](configs/v2_1_protocol.yaml)에 고정했다.
+
+2026-07-17 기준으로 공식 source registry, 50종목·10산업 사전 매핑표, 데이터 사전, 결정 로그와 credential-safe feasibility CLI까지 준비했다. 현재는 KRX Open API 인증키 및 6개 서비스 승인을 신청한 상태다. 기업행사 조정 검증, KRX·ECOS 공개시각 3거래일 관측, KRX 산업지수 구성 정의가 남아 있어 상태는 `DRAFT — NOT FROZEN`이다. 이 gate가 닫히기 전에는 V2.1 target·예측·성능 결과를 생성하지 않는다.
+
+데이터 가능성 점검은 별도 제한 CLI로 실행한다. 이 명령은 모델이나 `results/v2_1/`을 생성하지 않는다.
+
+```powershell
+python -m fx_research.v2_1_feasibility `
+  --config configs/v2_1_protocol.yaml `
+  --mode audit
+```
+
 ### 현재 V2 proof-of-concept 결과
 
 24개월 표본에서 전체 110개 Walk-forward 예측을 합쳐 비교하면 기본 RF의 RMSE는 약 `0.003712`, 네트워크 RF는 약 `0.003701`이었다. 차이는 약 0.3%로 매우 작고, 0을 예측하는 기준선의 RMSE가 약 `0.003552`로 더 낮았다. 즉 현재 표본에서는 네트워크 신호의 실질적인 증분가치를 입증하지 못했다. 방향 적중률은 기본 RF 약 48.2%, 네트워크 RF 약 49.1%였다.
@@ -128,6 +142,10 @@ results/generated/
 - [`docs/RECONSTRUCTION_AUDIT.md`](docs/RECONSTRUCTION_AUDIT.md): 재현 과정에서 발견된 불일치
 - [`docs/V2_RESEARCH_DESIGN.md`](docs/V2_RESEARCH_DESIGN.md): 업그레이드 연구 설계
 - [`docs/V2_1_ROADMAP.md`](docs/V2_1_ROADMAP.md): 장기·최신 데이터로 진행할 후속 버전의 실행 기준
+- [`docs/V2_1_PROTOCOL.md`](docs/V2_1_PROTOCOL.md): 결과 확인 전에 고정할 V2.1 사전등록형 연구 프로토콜
+- [`docs/V2_1_DECISION_LOG.md`](docs/V2_1_DECISION_LOG.md): 주 분석 선택, 대안, 미해결 항목과 동결 이력
+- [`docs/V2_1_DATA_DICTIONARY.md`](docs/V2_1_DATA_DICTIONARY.md): 필드별 단위·원천·관측 가능 시점·변환식
+- [`docs/V2_1_DATA_FEASIBILITY.md`](docs/V2_1_DATA_FEASIBILITY.md): 공식 API·기업행사·공개시각·산업지수 가능성 감사
 - [`archive_2025/README.md`](archive_2025/README.md): 2025 공개 산출물의 보존 원칙
 
 ## 버전 정책

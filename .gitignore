@@ -12,5 +12,15 @@ __pycache__/
 data/raw/*
 !data/raw/.gitkeep
 
+# API payloads, private lookup tables, and runtime request logs stay local.
+data/feasibility_raw/
+data/metadata/private/
+data/metadata/api_logs/
+
+# Credentials are read from environment variables only.
+.env
+.env.*
+!.env.example
+
 # Temporary runs can be regenerated with the CLI.
 results/generated/

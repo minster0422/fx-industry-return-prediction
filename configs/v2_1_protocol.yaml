@@ -1,0 +1,476 @@
+protocol:
+  name: "fx-industry-return-prediction-v2.1"
+  version: "0.1.0-draft"
+  status: "DRAFT_NOT_FROZEN"
+  created_at: "2026-07-17"
+  results_may_run: false
+  random_seed: 20250717
+  freeze_requires_unresolved_01_to_04_closed: true
+
+data:
+  collection_start: "2010-01-04"
+  collection_end: "2026-06-30"
+  last_feature_month: "2026-05"
+  last_target_month: "2026-06"
+  primary_stock_source: "KRX_OPEN_API"
+  primary_market_source: "KRX_OPEN_API"
+  primary_fx_source: "BOK_ECOS_OPEN_API"
+  fallback_stock_source: "FSC_DATA_GO_KR_STOCK_PRICE_API"
+  raw_data_committed: false
+  api_keys_committed: false
+  manifest_hash: "sha256"
+  target_timezone: "Asia/Seoul"
+  forecast_as_of: "18:30 on last KRX trading day of feature month"
+  source_not_available_by_cutoff_action: "lag_one_month"
+  official_source_terms_checked_at: "2026-07-17"
+  api_key_expiry_assumed_renewed: false
+  api_key_validity_years: 1
+
+data_feasibility:
+  checked_at: "2026-07-17"
+  evidence_only_not_performance_driven: true
+  KRX_API_KEY_status: "NOT_SET"
+  ECOS_API_KEY_status: "NOT_SET"
+  credential_values_recorded: false
+  krx_sample_api_status: "BLOCKED_CREDENTIAL"
+  feasibility_cli_implemented: true
+  feasibility_cli_modes:
+    - "metadata"
+    - "schema_sample"
+    - "corporate_actions"
+    - "timestamp_once"
+    - "audit"
+  feasibility_cli_waits_or_sleeps: false
+  krx_confirmed_ticker_codes: 0
+  krx_ticker_mapping_failures: 50
+  krx_nonblank_ticker_code_duplicates: 0
+  corporate_action_events_verified: 0
+  corporate_action_status: "BLOCKED_CREDENTIAL_AND_OFFICIAL_ENDPOINT"
+  corporate_action_official_endpoint_status: "UNRESOLVED"
+  krx_publication_timestamp_status: "BLOCKED_CREDENTIAL"
+  krx_api_ids_confirmed_from_official_service_pages:
+    - "stk_bydd_trd"
+    - "ksq_bydd_trd"
+    - "stk_isu_base_info"
+    - "ksq_isu_base_info"
+    - "krx_dd_trd"
+    - "kospi_dd_trd"
+  timestamp_observation_trading_days: 0
+  timestamp_observation_records: 0
+  ecos_metadata_status: "VERIFIED"
+  ecos_five_date_cross_check: "MATCH_5_OF_5_FOR_ALL_FOUR_ITEMS"
+  ecos_publication_timestamp_status: "OPEN"
+  krx_index_exact_or_partial_mappings: 0
+  krx_index_comparison_currently_included: false
+  full_target_generated: false
+  walk_forward_predictions_generated: false
+  performance_metrics_generated: false
+  results_v2_1_created: false
+
+universe:
+  primary: "legacy_10_sectors_50_stocks_point_in_time_available"
+  mapping_source: "src/fx_research/constants.py"
+  minimum_stocks_per_sector_month: 3
+  minimum_daily_coverage_ratio: 0.80
+  maximum_month_end_price_staleness_trading_days: 3
+  maximum_consecutive_suspension_days: 5
+  panel_start_rule: "first month when all 10 sectors have at least 3 valid stock returns"
+  eligible_forecast_month_minimum_sectors: 8
+  primary_forecast_month_requires_all_90_edges_minimum_pairs: true
+  replacement_stocks_allowed: false
+  comparison_sample: "pre_mapped_KRX_industry_indices"
+  comparison_is_sensitivity_only: true
+
+returns:
+  daily_stock_return_field: "UNRESOLVED_01"
+  monthly_compounding: "product_1_plus_daily_return_minus_1"
+  primary_sector_weighting: "equal_weight"
+  primary_market_index: "KOSPI"
+  primary_target: "next_month_equal_weight_sector_return_minus_next_month_KOSPI_return"
+  secondary_target: "next_month_lagged_market_cap_weight_sector_return_minus_next_month_KOSPI_return"
+  value_weight_reference: "feature_month_end_market_cap"
+  target_winsorized: false
+  raw_return_winsorized: false
+  corporate_action_validation:
+    minimum_known_events: 10
+    unexplained_absolute_return_threshold: 0.20
+    allowed_failures: 0
+
+fx:
+  primary_pair: "USD_KRW"
+  quote: "KRW_per_foreign_currency"
+  supplementary_pairs:
+    - "EUR_KRW"
+    - "JPY_KRW"
+    - "CNY_KRW"
+  supplementary_is_sensitivity_only: true
+  daily_return: "log_difference"
+  monthly_return: "sum_daily_log_returns"
+  official_series_code: "731Y001"
+  official_series_name: "3.1.1.1. 주요국 통화의 대원화환율"
+  primary_item_code: "0000001"
+  primary_item_name: "원/미국달러(매매기준율)"
+  official_item_codes:
+    USD_KRW: "0000001"
+    EUR_KRW: "0000003"
+    JPY_KRW: "0000002"
+    CNY_KRW: "0000053"
+  official_quotes:
+    USD_KRW: "KRW_per_1_USD"
+    EUR_KRW: "KRW_per_1_EUR"
+    JPY_KRW: "KRW_per_100_JPY"
+    CNY_KRW: "KRW_per_1_CNY"
+  official_units:
+    USD_KRW: "KRW"
+    EUR_KRW: "KRW"
+    JPY_KRW: "KRW_per_100_JPY"
+    CNY_KRW: "KRW"
+  availability_start:
+    USD_KRW: "1964-05-04"
+    EUR_KRW: "1994-04-11"
+    JPY_KRW: "1977-04-01"
+    CNY_KRW: "2016-01-04"
+  missing_daily_observation_rule: "no_fill_inner_join_with_stock_market_dates"
+  publication_time: "UNRESOLVED_03"
+  revision_policy: "UNRESOLVED_03"
+  item_codes_selected_without_performance_results: true
+
+beta:
+  primary_window_trading_days: 252
+  primary_minimum_observations: 200
+  sensitivity_window_trading_days: 504
+  sensitivity_minimum_observations: 400
+  regression: "stock_return ~ intercept + USDKRW_log_return + KOSPI_return"
+  estimator: "OLS"
+  standard_error: "Newey_West_HAC"
+  hac_max_lag: 5
+  outputs:
+    - "beta_fx"
+    - "beta_fx_se"
+    - "beta_fx_pvalue"
+    - "beta_market"
+    - "r_squared"
+
+clustering:
+  algorithm: "KMeans"
+  init: "k-means++"
+  solver_algorithm: "lloyd"
+  k: 4
+  features:
+    - "beta_fx_252"
+    - "stock_mean_return_252_annualized"
+    - "stock_volatility_252_annualized"
+  scaler: "StandardScaler_monthly_cross_section"
+  n_init: 50
+  max_iter: 300
+  tolerance: 0.0001
+  random_state: 20250717
+  canonical_label_order:
+    - "cluster_beta_median_ascending"
+    - "cluster_volatility_median_ascending"
+    - "original_centroid_index_ascending"
+  stability_metrics:
+    - "adjusted_rand_index_common_stocks"
+    - "cluster_migration_share_common_stocks"
+
+features:
+  base:
+    - "sector_excess_return_t"
+    - "sector_excess_return_t_minus_1"
+    - "sector_excess_return_t_minus_2"
+    - "sector_equal_weight_return_t"
+    - "KOSPI_return_t"
+    - "USDKRW_return_t"
+    - "sector_excess_volatility_12m"
+    - "market_volatility_21d_annualized"
+    - "coverage_ratio"
+    - "sector_one_hot_9_columns"
+  exposure:
+    - "beta_median"
+    - "beta_iqr"
+    - "beta_positive_share"
+    - "beta_significant_share_p_lt_0_05"
+    - "beta_se_median"
+    - "beta_r2_median"
+    - "cluster_share_1"
+    - "cluster_share_2"
+    - "cluster_share_3"
+    - "cluster_migration_share"
+    - "beta_median_times_USDKRW_return_t"
+  network:
+    - "network_signal"
+    - "leader_count"
+    - "network_weight_abs_sum"
+
+foreign_flow:
+  included_in_primary: false
+  sensitivity_inclusion_requires:
+    official_source_confirmed: true
+    full_primary_period_same_definition: true
+    minimum_stock_month_coverage: 0.95
+    availability_before_forecast_cutoff_confirmed: true
+    raw_redistribution_not_required: true
+  variable_if_included: "monthly_foreign_net_purchase_value_divided_by_lagged_market_cap"
+  sector_aggregation: "median"
+
+network:
+  primary_type: "continuous_directional_lead_lag"
+  return_input: "sector_excess_return"
+  lookback_pairs: 60
+  minimum_valid_pairs: 48
+  self_edges_allowed: false
+  weight: "pearson_correlation_leader_s_follower_s_plus_1"
+  latest_follower_month_in_weight: "feature_month_minus_1"
+  permutation:
+    method: "circular_block_permutation_of_leader"
+    block_length_months: 6
+    repetitions: 1000
+    two_sided: true
+    edge_seed: "SeedSequence_[20250717_YYYYMM_leader_rank_follower_rank]"
+  multiple_testing: "Benjamini_Hochberg"
+  fdr_q_threshold: 0.10
+  absolute_weight_threshold: 0.20
+  signal_normalization: "sum_weight_times_current_leader_return_divided_by_sum_absolute_weight"
+  no_edge_signal: 0.0
+  binary_lift_sensitivity:
+    enabled: true
+    up_definition: "sector_excess_return_gt_0"
+    minimum_support: 0.15
+    minimum_joint_count: 9
+    minimum_lift: 1.20
+    permutation_repetitions: 1000
+    fdr_q_threshold: 0.10
+    pvalue_tail: "one_sided_lift_greater_or_equal"
+    weight: "lift_minus_1"
+    signal: "sum_weight_times_current_leader_excess_return_divided_by_sum_weight"
+    no_edge_signal: 0.0
+
+walk_forward:
+  pooled_sector_month_model: true
+  primary_training_window_months: 60
+  minimum_valid_target_months_per_sector: 48
+  retrain_frequency: "monthly"
+  expanding_window_sensitivity: true
+  inner_folds:
+    - train_months: 36
+      validation_months: 8
+    - train_months: 44
+      validation_months: 8
+    - train_months: 52
+      validation_months: 8
+  inner_selection_metric: "mean_validation_MAE"
+  split_unit: "calendar_month_all_sectors_together"
+  first_forecast_requires_all_90_edges_minimum_pairs_for_months_t_minus_60_through_t: true
+
+preprocessing:
+  maximum_core_predictor_missing_rate: 0.05
+  core_predictor_scope: "all_continuous_BASE_EXPOSURE_NETWORK_inputs_used_by_M4R"
+  excessive_missing_action: "abort_all_models_for_outer_forecast_month"
+  missing_imputation: "outer_training_median"
+  add_missing_indicator: true
+  predictor_clip_quantiles:
+    lower: 0.01
+    upper: 0.99
+  clip_fit_scope: "outer_training_only"
+  target_clipped: false
+  ridge_scaler: "StandardScaler_outer_training_only"
+  ridge_scaler_standard_deviation_ddof: 0
+  random_forest_scaler: "none"
+  quantile_interpolation: "linear"
+  inner_preprocessors_fit_on_inner_training_only: true
+  tie_tolerance: 0.000000000001
+
+models:
+  ridge_fixed_parameters:
+    fit_intercept: true
+    solver: "svd"
+    tolerance: 0.0001
+  M0_mean:
+    estimator: "sector_specific_60m_historical_mean"
+    feature_set: []
+    window_target_months: 60
+    minimum_valid_targets: 48
+    purpose: "constant_baseline"
+  M0_last:
+    estimator: "identity"
+    feature_set:
+      - "sector_excess_return_t"
+    purpose: "persistence_baseline"
+  M1:
+    estimator: "Ridge"
+    feature_set: "base"
+    alpha_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+    purpose: "linear_base"
+  M1N:
+    estimator: "Ridge"
+    feature_set: "base_plus_network"
+    alpha_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+    purpose: "network_only_ablation"
+  M2:
+    estimator: "RandomForestRegressor"
+    feature_set: "base"
+    purpose: "nonlinear_base"
+  M3R:
+    estimator: "Ridge"
+    feature_set: "base_plus_exposure"
+    alpha_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+    purpose: "primary_H1"
+  M3F:
+    estimator: "RandomForestRegressor"
+    feature_set: "base_plus_exposure"
+    purpose: "secondary_H1"
+  M4R:
+    estimator: "Ridge"
+    feature_set: "base_plus_exposure_plus_network"
+    alpha_grid: [0.01, 0.1, 1.0, 10.0, 100.0]
+    purpose: "primary_H3"
+  M4F:
+    estimator: "RandomForestRegressor"
+    feature_set: "base_plus_exposure_plus_network"
+    purpose: "secondary_H3"
+  random_forest_grid:
+    n_estimators: 500
+    max_depth: [3, 5, null]
+    min_samples_leaf: [5, 10, 20]
+    max_features: ["sqrt", 0.5, 1.0]
+    bootstrap: true
+    criterion: "squared_error"
+    random_state: 20250717
+    n_jobs: -1
+
+evaluation:
+  primary_contrast: "M4R_minus_M3R"
+  primary_metric: "paired_MAE_difference"
+  secondary_metrics:
+    - "MAE"
+    - "RMSE"
+    - "OOS_R2_vs_M0_mean"
+    - "monthly_Spearman_rank_IC"
+    - "direction_accuracy"
+    - "balanced_accuracy"
+  zero_prediction_direction_action: "exclude_and_report_count"
+  minimum_sectors_for_monthly_rank_ic: 8
+  bootstrap:
+    method: "moving_month_block"
+    block_length_months: 6
+    repetitions: 10000
+    confidence_level: 0.95
+    interval: "percentile"
+    circular: true
+    quantile_interpolation: "linear"
+    random_seed: 20250717
+  minimum_oos_months_for_inference: 36
+  minimum_paired_sector_months_for_inference: 300
+  network_active_months_is_reporting_metric_not_sample_gate: true
+  subperiod_split: "chronological_numpy_array_split_3"
+  inner_fold_aggregation: "equal_mean_of_three_fold_level_pooled_MAE_values"
+
+regimes:
+  fx:
+    lookback_months: 60
+    appreciation_threshold_quantile: 0.3333333333
+    depreciation_threshold_quantile: 0.6666666667
+    threshold_uses_current_month: false
+  market_volatility:
+    current_window_trading_days: 21
+    historical_threshold_lookback_months: 60
+    threshold: "trailing_median_excluding_current"
+  minimum_months_for_regime_inference: 24
+
+backtest:
+  status: "secondary_descriptive"
+  prediction_model: "M4R"
+  long_top_sectors: 2
+  short_bottom_sectors: 2
+  long_weight_each: 0.25
+  short_weight_each: -0.25
+  prediction_tie_break: "sector_alphabetical_order_from_constants"
+  initial_previous_weights: "all_zero"
+  gross_exposure: 1.0
+  net_exposure: 0.0
+  turnover: "0.5_times_sum_absolute_weight_change"
+  transaction_cost_per_turnover: 0.0020
+  includes_short_borrow_cost: false
+  includes_taxes: false
+  includes_market_impact: false
+
+sensitivity:
+  one_change_at_a_time: true
+  combinations_allowed: false
+  retune_with_same_inner_cv_when_target_or_predictors_change: true
+  ordered_analyses:
+    - "random_forest_models"
+    - "market_cap_weighted_target"
+    - "beta_504_trading_days"
+    - "EURKRW_replaces_USDKRW"
+    - "JPYKRW_replaces_USDKRW"
+    - "CNYKRW_replaces_USDKRW"
+    - "expanding_window"
+    - "binary_lift_network"
+    - "KRX_industry_index_comparison"
+    - "foreign_flow_if_eligible"
+  krx_index_comparison:
+    minimum_mapped_sectors: 8
+    allowed_mapping_labels: ["exact", "partial"]
+    tracking_metrics: ["correlation", "MAE"]
+    model_contrast: "M1N_minus_M1"
+    changes_primary_H1_or_H3: false
+
+decision_rules:
+  H1_confirmed:
+    - "sample_size_gates_pass"
+    - "delta_MAE_M3R_minus_M1_lt_0"
+    - "bootstrap_CI_upper_lt_0"
+    - "delta_MAE_negative_in_at_least_2_of_3_subperiods"
+  H2_confirmed:
+    minimum_network_oos_months: 36
+    edge_persistence_minimum: 0.20
+    edge_sign_consistency_minimum: 0.75
+    minimum_edges_meeting_both: 1
+  network_incremental_value_confirmed:
+    - "sample_size_gates_pass"
+    - "delta_MAE_M4R_minus_M3R_lt_0"
+    - "bootstrap_CI_upper_lt_0"
+    - "delta_MAE_negative_in_at_least_2_of_3_subperiods"
+  network_incremental_value_not_confirmed: "sample_size_gates_pass_but_any_confirmation_condition_fails"
+  insufficient_sample: "oos_months_lt_36_or_paired_rows_lt_300"
+  H1_insufficient_sample: "oos_months_lt_36_or_H1_paired_rows_lt_300"
+  H3_insufficient_sample: "oos_months_lt_36_or_H3_paired_rows_lt_300"
+  H2_insufficient_sample: "network_computable_oos_months_lt_36"
+  practical_value_confirmed:
+    - "rank_IC_bootstrap_CI_lower_gt_0"
+    - "net_long_short_mean_return_bootstrap_CI_lower_gt_0"
+
+engineering_release_gates:
+  single_command: "python -m fx_research.v2_1 --config configs/v2_1_protocol.yaml"
+  data_manifest_required: true
+  sha256_required: true
+  leakage_tests_required: true
+  alignment_tests_required: true
+  corporate_action_tests_required: true
+  locked_environment_required: true
+  reproducibility_max_absolute_prediction_difference: 0.000000000001
+  negative_results_must_be_published: true
+
+unresolved:
+  UNRESOLVED_01:
+    description: "KRX price/return field corporate-action adjustment and official split/merge/capital-reduction event source"
+    blocks_freeze: true
+  UNRESOLVED_02:
+    description: "KRX Open API publication timestamp"
+    blocks_freeze: true
+  UNRESOLVED_03:
+    description: "ECOS FX publication timestamp and revision policy; table/item codes, units, and quote directions verified on 2026-07-17"
+    blocks_freeze: true
+    metadata_definition_status: "CLOSED"
+    timing_and_revision_status: "OPEN"
+  UNRESOLVED_04:
+    description: "Legacy sector to KRX industry-index mapping"
+    blocks_freeze: true
+  UNRESOLVED_05:
+    description: "Official foreign-flow access, timing, redistribution"
+    blocks_freeze: false
+  UNRESOLVED_06:
+    description: "Official permission scope for publishing row-level derived KRX and ECOS outputs"
+    blocks_freeze: false
+    blocks_public_release: true
