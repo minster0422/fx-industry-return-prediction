@@ -1,0 +1,2 @@
+audit_id,event_date,event_type,ticker_name,ticker_code,official_event_source_url,price_field,return_field,pre_event_close,event_day_close,reported_return,implied_return,unexplained_abs_return_gt_0_20,validation_status,checked_at,failure_reason
+FEASIBILITY_GATE,,,,,https://www.data.go.kr/data/15059609/openapi.do,clpr,fltRt,,,,,,BLOCKED_CREDENTIAL_AND_OFFICIAL_ENDPOINT,2026-07-17,"KRX_API_KEY가 NOT_SET이고 KRX Open API 서비스 목록에서 분할·병합·감자 사건 모집단 endpoint도 확인되지 않아 날짜순 최초 10건을 선택하거나 검증하지 않음"
