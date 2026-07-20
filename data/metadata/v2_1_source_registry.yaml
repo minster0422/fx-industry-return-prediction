@@ -1,10 +1,10 @@
 registry:
   version: "0.1.0-feasibility"
-  checked_at: "2026-07-17"
+  checked_at: "2026-07-20"
   timezone: "Asia/Seoul"
   raw_payloads_committed: false
   credentials:
-    KRX_API_KEY: "NOT_SET"
+    KRX_API_KEY: "SET_VALUE_NOT_RECORDED"
     ECOS_API_KEY: "NOT_SET"
   credential_values_recorded: false
 
@@ -19,23 +19,41 @@ sources:
     schema_page_modified_at: "2026-01-16"
     authentication_header_name: "AUTH_KEY"
     authentication_environment_variable: "KRX_API_KEY"
-    authentication_status: "BLOCKED_CREDENTIAL"
+    authentication_status: "APPROVED_AND_SCHEMA_SAMPLE_COMPLETED"
+    approved_api_ids:
+      - "stk_bydd_trd"
+      - "ksq_bydd_trd"
+      - "stk_isu_base_info"
+      - "ksq_isu_base_info"
+      - "krx_dd_trd"
+      - "kospi_dd_trd"
     daily_stock_trading:
       service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=JvJFzlAENzZlPBDNGAWC"
       coverage_start: "2010-01-04"
       api_id: "stk_bydd_trd"
       sample_endpoint_identifier: "/svc/sample/apis/sto/stk_bydd_trd"
       production_endpoint_identifier: "/svc/apis/sto/stk_bydd_trd"
-      fields: "UNRESOLVED_01"
-      units: "UNRESOLVED_01"
+      ticker_code_field: "ISU_CD"
+      ticker_code_meaning: "6_digit_short_code"
+      fields:
+        BAS_DD: {type: "string", unit: "YYYYMMDD", meaning: "기준일"}
+        ISU_CD: {type: "string", unit: "6_digit_code", meaning: "일별 시세 단축코드"}
+        TDD_CLSPRC: {raw_type: "string", converted_type: "float", unit: "KRW", meaning: "종가"}
+        FLUC_RT: {raw_type: "string", converted_type: "float", unit: "percent", meaning: "등락률 후보; 연구 수익률로 미확정"}
+        ACC_TRDVOL: {raw_type: "string", converted_type: "integer", unit: "shares", meaning: "누적거래량"}
+        ACC_TRDVAL: {raw_type: "string", converted_type: "integer", unit: "KRW", meaning: "누적거래대금"}
+        MKTCAP: {raw_type: "string", converted_type: "integer", unit: "KRW", meaning: "시가총액"}
+      conversion_rule: "strip_commas; blank_or_dash_to_NaN; invalid_numeric_to_NaN_and_count_failure"
       corporate_action_adjustment: "UNRESOLVED_01"
       publication_time: "UNRESOLVED_02"
     kosdaq_daily_stock_trading:
       service_page_url: "https://openapi.krx.co.kr/contents/OPP/USES/service/OPPUSES002_S2.cmd?BO_ID=hZjGpkllgCBCWqeTsYFj"
       api_id: "ksq_bydd_trd"
       production_endpoint_identifier: "/svc/apis/sto/ksq_bydd_trd"
-      fields: "UNRESOLVED_01"
-      units: "UNRESOLVED_01"
+      ticker_code_field: "ISU_CD"
+      ticker_code_meaning: "6_digit_short_code"
+      fields: "SAME_VALIDATED_CANDIDATE_FIELDS_AS_KOSPI_DAILY"
+      units: "RECORDED_IN_KOSPI_DAILY_FIELD_REGISTRY"
       corporate_action_adjustment: "UNRESOLVED_01"
       publication_time: "UNRESOLVED_02"
     kospi_index_daily:
@@ -57,6 +75,22 @@ sources:
       kosdaq_api_id: "ksq_isu_base_info"
       kospi_production_endpoint_identifier: "/svc/apis/sto/stk_isu_base_info"
       kosdaq_production_endpoint_identifier: "/svc/apis/sto/ksq_isu_base_info"
+      short_code_field: "ISU_SRT_CD"
+      isin_field: "ISU_CD"
+      identity_join_rule: "CURRENT_EXACT_OFFICIAL_NAME_OR_PREVERIFIED_EXACT_SHORT_CODE_AND_ISIN"
+      fuzzy_name_matching_allowed: false
+      verified_legacy_mapping_count: 50
+      mapping_failures: 0
+      duplicate_nonblank_short_codes: 0
+      identity_provenance_file: "data/metadata/v2_1_ticker_identity_provenance.csv"
+    schema_sample_2026_04_01_to_2026_06_30:
+      stock_rows: 305
+      rows_per_fixed_stock: 61
+      kospi_rows: 61
+      missing_values_candidate_fields: 0
+      duplicate_date_ticker_keys: 0
+      numeric_conversion_failures_candidate_fields: 0
+      raw_values_committed: false
     related_eod_distribution_spec:
       official_url: "https://openapi.krx.co.kr/contents/OPP/DATA/OPPDATA002.jsp"
       first_transmission_time: "16:00_KST"
@@ -108,7 +142,7 @@ sources:
       - "유상증자"
       - "주식교환"
       - "감자"
-    event_sample_status: "BLOCKED_CREDENTIAL_AND_ENDPOINT_NOT_REGISTERED_FOR_FEASIBILITY_CLI"
+    event_sample_status: "BLOCKED_OFFICIAL_SOURCE_ENDPOINT_NOT_REGISTERED_FOR_FEASIBILITY_CLI"
 
   BOK_ECOS_OPEN_API:
     institution: "한국은행"

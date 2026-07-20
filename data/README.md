@@ -10,6 +10,10 @@
 
 이 파일들은 과거 결과를 재현하기 위한 기준자료이며, 정확한 값이라고 보증하는 수정본이 아니다.
 
+`metadata/`에는 V2.1의 공개 가능한 출처·schema·식별 metadata만 둔다. `v2_1_ticker_mapping.csv`는 U0 Legacy-50의 KRX 단축코드와 ISIN을 기록하고, `v2_1_ticker_identity_provenance.csv`는 HDC/IPARK현대산업개발 명칭 변경을 동일 코드·ISIN으로 확인한 근거만 기록한다. 종목명 유사도는 자동 매칭 근거로 사용하지 않는다.
+
+KRX 종목기본정보에서 단축코드는 `ISU_SRT_CD`, ISIN은 `ISU_CD`다. KRX 일별 시세에서는 6자리 단축코드가 `ISU_CD`로 반환되므로 API별 schema를 구분한다. 공개 metadata에는 일별 시세 원시행이나 인증키 값이 포함되지 않는다.
+
 ## 로컬 원시 데이터
 
 `raw/merged_50stocks_fx_multi.csv`는 Git에서 제외된다. 필요한 열은 다음과 같다.

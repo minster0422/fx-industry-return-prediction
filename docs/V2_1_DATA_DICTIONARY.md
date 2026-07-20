@@ -13,8 +13,10 @@
 
 | 필드 | 단위/형 | 원천 | 관측 가능 시점 | 정의·변환 |
 |---|---|---|---|---|
-| `ticker_code` | 문자열 | KRX 종목기본정보 | 상장 공시 이후 | 영구 종목 식별코드. 종목명 대신 join key로 사용 |
+| `ticker_code` | 6자리 문자열 | KRX 종목기본정보 `ISU_SRT_CD` | 상장 공시 이후 | 종목기본정보의 단축코드. 일별 시세에서는 같은 의미의 필드가 `ISU_CD`로 반환된다. 영구 식별자로 가정하지 않음 |
+| `isin_code` | 문자열 | KRX 종목기본정보 `ISU_CD` | 상장 공시 이후 | ISIN. 일별 시세의 `ISU_CD`와 이름은 같지만 의미가 다르므로 API별 schema로 구분 |
 | `ticker_name` | 문자열 | KRX 종목기본정보 | 해당 시점 | 표시용 종목명; 분석 join에는 사용하지 않음 |
+| `identity_provenance_status` | 범주 | 공개 provenance 표 | 검증일 이후 | 명칭 변경 연결은 동일 6자리 코드와 동일 ISIN을 모두 공식 응답에서 확인한 경우만 `VERIFIED_CODE_AND_ISIN`; 문자열 유사도 자동확정 금지 |
 | `listing_date` | 날짜 | KRX 종목기본정보 | 상장 공시 이후 | 이 날짜 전 종목 관측은 구조적 결측 |
 | `delisting_date` | 날짜/NA | KRX 종목기본정보 | 상장폐지 공시 이후 | 이 날짜 후 종목 관측은 구조적 결측 |
 | `sector` | 범주 10개 | `constants.py` | 고정 | 2025 연구의 산업 매핑 |
@@ -30,12 +32,14 @@
 
 | 필드 | 단위/형 | 원천 | 관측 가능 시점 | 정의·변환 |
 |---|---|---|---|---|
-| `stock_price_raw` | KRW | KRX Open API | `UNRESOLVED-02` | 공식 종가 후보 필드; 기업행사 조정 전후 정의는 `UNRESOLVED-01` |
+| `daily_ticker_code_raw` | 6자리 문자열 | KRX 일별 시세 `ISU_CD` | `UNRESOLVED-02` | 일별 시세의 단축코드. 종목기본정보의 ISIN 필드 `ISU_CD`와 혼동 금지 |
+| `stock_price_raw` | KRW, float | KRX `TDD_CLSPRC` | `UNRESOLVED-02` | 쉼표 제거 후 float 변환. 빈 문자열·`-`·비정상 문자열은 NaN, 변환 실패 수 기록. 기업행사 조정 정의는 `UNRESOLVED-01` |
 | `corporate_action_flag` | 범주/NA | KRX 공식 권리·기업행사 자료 | 공시 후 | 분할·병합·감자·분사 등 검증 사건 코드 |
-| `stock_return_daily` | 소수 | KRX Open API/검증 파생 | `UNRESOLVED-02` | 기업행사 검증을 통과한 공식 일별 등락률 또는 조정가격의 `P_d/P_{d-1}-1` |
-| `stock_volume_daily` | 주 | KRX Open API | `UNRESOLVED-02` | 일별 거래량; 품질 점검용 |
-| `stock_value_daily` | KRW | KRX Open API | `UNRESOLVED-02` | 일별 거래대금; 품질 점검용 |
-| `market_cap_daily` | KRW | KRX Open API 후보 | `UNRESOLVED-02` | 시가총액; 시가가중 민감도 분석에 사용 |
+| `daily_change_rate_candidate` | %, float | KRX `FLUC_RT` | `UNRESOLVED-02` | 쉼표 제거 후 float 변환. 퍼센트 단위 후보이며 기업행사 검증 전에는 `stock_return_daily`로 확정하지 않음 |
+| `stock_return_daily` | 소수 | KRX Open API/검증 파생 | `UNRESOLVED-02` | `UNRESOLVED-01` 종료 전 미확정. 이후 기업행사 검증을 통과한 등락률을 100으로 나누거나 조정가격의 `P_d/P_{d-1}-1` 중 사전 결정 |
+| `stock_volume_daily` | 주, 정수 | KRX `ACC_TRDVOL` | `UNRESOLVED-02` | 쉼표 제거 후 integer 변환; 빈 문자열·`-`·비정상 문자열은 NaN 및 실패 집계 |
+| `stock_value_daily` | KRW, 정수 | KRX `ACC_TRDVAL` | `UNRESOLVED-02` | 쉼표 제거 후 integer 변환; 빈 문자열·`-`·비정상 문자열은 NaN 및 실패 집계 |
+| `market_cap_daily` | KRW, 정수 | KRX `MKTCAP` | `UNRESOLVED-02` | 쉼표 제거 후 integer 변환; 빈 문자열·`-`·비정상 문자열은 NaN 및 실패 집계 |
 | `KOSPI_level` | 지수포인트 | KRX Open API | `UNRESOLVED-02` | KOSPI 공식 지수 종가 |
 | `market_return_daily` | 소수 | KRX Open API/파생 | `UNRESOLVED-02` | 공식 일별 지수수익률 또는 `I_d/I_{d-1}-1` |
 | `fx_USDKRW_level` | KRW/USD | BOK ECOS `731Y001/0000001` | 공개 시각 `UNRESOLVED-03` | `원/미국달러(매매기준율)`; 상승은 원화 약세 |

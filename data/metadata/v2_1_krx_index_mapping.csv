@@ -1,11 +1,11 @@
 legacy_sector,krx_index_name,krx_index_code,mapping_label,mapping_basis,constituent_definition_url,checked_at,include_in_sensitivity
-건설,KRX 건설,,unavailable,"공식 KRX 지수 카탈로그에서 명칭 존재만 확인; 지수코드와 구성종목 정의는 인증 없이 확인하지 못함",https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
-금융,KRX 은행,,unavailable,"legacy 금융은 은행 외 업종을 포함하고 지수코드·구성종목 정의를 확인하지 못함",https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
-미디어_엔터,KRX 미디어&엔터테인먼트,,unavailable,"공식 KRX 공시에서 지수명 존재만 확인; 지수코드와 현재 구성종목 정의를 확인하지 못함",https://kind.krx.co.kr/external/2025/07/25/000107/20250725000253/68630.htm,2026-07-17,false
-바이오_제약,KRX 헬스케어,,unavailable,"공식 KRX 공시에서 지수명 존재만 확인; 지수코드와 현재 구성종목 정의를 확인하지 못함",https://kind.krx.co.kr/external/2022/02/17/000040/20220217000059/68629.htm,2026-07-17,false
-반도체,KRX 반도체,,unavailable,"공식 KRX 지수 카탈로그에서 명칭 존재만 확인; 지수코드와 구성종목 정의는 인증 없이 확인하지 못함",https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
-에너지_정유,KRX 에너지화학,,unavailable,"legacy 섹터는 정유·가스·전력을 함께 포함하며 지수코드·구성종목 정의를 확인하지 못함",https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
-유통_소매,,,unavailable,"공식 구성 정의에 근거한 후보 지수를 확인하지 못함",,2026-07-17,false
-자동차,,,unavailable,"공식 구성 정의에 근거한 후보 지수를 확인하지 못함",,2026-07-17,false
-통신,,,unavailable,"공식 구성 정의에 근거한 후보 지수를 확인하지 못함",,2026-07-17,false
-화학,KRX 에너지화학,,unavailable,"legacy 화학과 후보 지수의 범위가 다를 수 있고 지수코드·구성종목 정의를 확인하지 못함",https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
+건설,KRX 건설,,unavailable,공식 KRX 지수 카탈로그에서 명칭 존재만 확인; 지수코드와 구성종목 정의는 인증 없이 확인하지 못함,https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
+금융,KRX 은행,,unavailable,legacy 금융은 은행 외 업종을 포함하고 지수코드·구성종목 정의를 확인하지 못함,https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
+미디어_엔터,KRX 미디어&엔터테인먼트,,unavailable,공식 KRX 공시에서 지수명 존재만 확인; 지수코드와 현재 구성종목 정의를 확인하지 못함,https://kind.krx.co.kr/external/2025/07/25/000107/20250725000253/68630.htm,2026-07-17,false
+바이오_제약,KRX 헬스케어,,unavailable,공식 KRX 공시에서 지수명 존재만 확인; 지수코드와 현재 구성종목 정의를 확인하지 못함,https://kind.krx.co.kr/external/2022/02/17/000040/20220217000059/68629.htm,2026-07-17,false
+반도체,KRX 반도체,,unavailable,공식 KRX 지수 카탈로그에서 명칭 존재만 확인; 지수코드와 구성종목 정의는 인증 없이 확인하지 못함,https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
+에너지_정유,KRX 에너지화학,,unavailable,legacy 섹터는 정유·가스·전력을 함께 포함하며 지수코드·구성종목 정의를 확인하지 못함,https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false
+유통_소매,,,unavailable,공식 구성 정의에 근거한 후보 지수를 확인하지 못함,,2026-07-17,false
+자동차,,,unavailable,공식 구성 정의에 근거한 후보 지수를 확인하지 못함,,2026-07-17,false
+통신,,,unavailable,공식 구성 정의에 근거한 후보 지수를 확인하지 못함,,2026-07-17,false
+화학,KRX 에너지화학,,unavailable,legacy 화학과 후보 지수의 범위가 다를 수 있고 지수코드·구성종목 정의를 확인하지 못함,https://pdf.krx.co.kr/ebook_new/access/ecatalogt.jsp?Dir=23&callmode=normal&catimage=&eclang=ko&start=109&um=s,2026-07-17,false

@@ -8,7 +8,7 @@ V2.1은 24개월 proof-of-concept의 숫자를 조금 개선하는 작업이 아
 
 세부 연구 정의의 유일한 기준은 [`V2_1_PROTOCOL.md`](V2_1_PROTOCOL.md)와 [`../configs/v2_1_protocol.yaml`](../configs/v2_1_protocol.yaml)이다. 이 로드맵은 실행 순서와 gate만 설명하며 프로토콜과 충돌할 경우 프로토콜을 우선한다.
 
-## 현재 상태 — 2026-07-17
+## 현재 상태 — 2026-07-20
 
 상태는 `DRAFT_NOT_FROZEN`이다. V2.1 전체 target, 모델, Walk-forward 예측, 성능, 백테스트는 생성하지 않았다.
 
@@ -23,19 +23,19 @@ V2.1은 24개월 proof-of-concept의 숫자를 조금 개선하는 작업이 아
 - 원자료·인증키·private metadata·API log의 Git 제외
 - ECOS 통계표 `731Y001`과 4개 환율 항목 metadata 확인
 - 공식 KRX API ID 6개 확인
+- KRX 인증키와 필수 6개 서비스 승인 완료
+- U0 Legacy-50 공식 식별 50/50, 매핑 실패·중복 코드 0
+- HDC/IPARK 명칭 변경을 동일 코드 `294870`·ISIN `KR7294870001` provenance로 확인
+- 고정 5종목 2026-04-01~06-30 총 305행과 KOSPI 61행 schema 검증
+- 후보 5필드의 결측·중복·숫자 변환 실패 0
+- 종목기본정보 `ISU_SRT_CD`와 일별 시세 `ISU_CD`를 API별로 분리하고 회귀 테스트 추가
+- U1 Expanded-10을 채택하지 않고 V2.2 후보로 이관
 
-### 승인 대기
+### 남은 인증·공식 근거
 
-- `KRX_API_KEY` 발급
-- 아래 KRX 서비스 활용승인
-  - `stk_bydd_trd`
-  - `ksq_bydd_trd`
-  - `stk_isu_base_info`
-  - `ksq_isu_base_info`
-  - `krx_dd_trd`
-  - `kospi_dd_trd`
 - 운영용 `ECOS_API_KEY`
 - 분할·병합·감자 사건 모집단을 제공하는 공식 endpoint 또는 기관 파일
+- KRX 문의 답변: 과거 종목 구성, 산업분류, 영구 계보, 가격·등락률 조정, 파생 통계 공개 범위
 
 키 값은 환경변수에서만 읽고 문서·명령행·로그·Git 파일에 기록하지 않는다.
 
@@ -70,6 +70,8 @@ python -m fx_research.v2_1_feasibility `
 - ECOS 4개 항목과 고정 5개 날짜 운영 endpoint 재검증
 - KRX 지수 후보 코드 확인
 
+2026-07-20 현재 U0 종목 식별 조건은 완료됐다. ECOS 운영 endpoint와 KRX 산업지수 구성 정의는 별도 미해결 상태다.
+
 ### Gate 2 — 제한 schema·기업행사 시험
 
 고정 5종목의 공식 매핑이 완료된 경우에만 최대 3개월 schema 표본을 실행한다.
@@ -94,6 +96,8 @@ python -m fx_research.v2_1_feasibility `
 - 표본의 결측률·중복 key·날짜 범위 기록
 - 공식 사건을 정해진 정렬 규칙으로 선택한 최초 10건 검증
 - 기업행사 설명이 안 되는 절대 일수익률 20% 초과 실패 0건인 필드만 추천
+
+고정 5종목·KOSPI schema 조건은 2026-07-20 완료됐다. 기업행사 조정 검증은 공식 사건자료가 없어 아직 차단 상태다.
 
 ### Gate 3 — 공개시각 3거래일 관측
 

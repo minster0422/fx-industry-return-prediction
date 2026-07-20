@@ -78,7 +78,7 @@ V2는 완성된 투자모형이 아니라, 원래 아이디어를 검증 가능�
 
 V2.1은 **아직 전체 데이터 수집·모델 학습·성능 평가 전**이다. 결과를 보기 전에 표본, 다음 달 산업 초과수익률 타깃, 60개월 rolling 학습창, M0~M4 비교, paired MAE, month-block bootstrap, 실패 판정 규칙을 [`docs/V2_1_PROTOCOL.md`](docs/V2_1_PROTOCOL.md)와 [`configs/v2_1_protocol.yaml`](configs/v2_1_protocol.yaml)에 고정했다.
 
-2026-07-17 기준으로 공식 source registry, 50종목·10산업 사전 매핑표, 데이터 사전, 결정 로그와 credential-safe feasibility CLI까지 준비했다. 현재는 KRX Open API 인증키 및 6개 서비스 승인을 신청한 상태다. 기업행사 조정 검증, KRX·ECOS 공개시각 3거래일 관측, KRX 산업지수 구성 정의가 남아 있어 상태는 `DRAFT — NOT FROZEN`이다. 이 gate가 닫히기 전에는 V2.1 target·예측·성능 결과를 생성하지 않는다.
+2026-07-20 기준 KRX 인증과 6개 서비스 승인을 완료했고, U0 Legacy-50을 공식 코드로 50/50 식별했다. 명칭이 바뀐 HDC/IPARK현대산업개발은 동일 코드·ISIN provenance로만 연결했으며, 고정 5종목의 2026-04-01~06-30 일별 시세 305행과 KOSPI 61행에서 결측·중복·숫자 변환 실패가 모두 0임을 확인했다. U1 Expanded-10은 과거 업종 구성·종목 계보·기업행사 조정 문제가 남아 V2.2 후보로 이관한다. 기업행사 조정, KRX·ECOS 공개시각 관측, KRX 산업지수 구성 정의가 미해결이므로 상태는 `DRAFT — NOT FROZEN`이며 V2.1 target·예측·성능 결과는 아직 생성하지 않는다.
 
 데이터 가능성 점검은 별도 제한 CLI로 실행한다. 이 명령은 모델이나 `results/v2_1/`을 생성하지 않는다.
 
