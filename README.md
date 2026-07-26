@@ -88,6 +88,13 @@ python -m fx_research.v2_1_feasibility `
   --mode audit
 ```
 
+U0 전체수집 전 계획과 dry-run은 별도 수집기 골격으로 확인한다. 2026-07-20 계획 기준 평일 후보일 4,302일, KRX 요청 상한 12,908회, KRX 로컬 저장 추정 약 2.16GB이며 실제 거래일·응답 크기·압축률에 따라 달라진다. ECOS 4개 계열은 평일 행 상한 17,208행만 표시하고, 호출 수·원시 저장량은 UNRESOLVED-03이 닫히기 전 추정하지 않는다. 프로토콜 동결과 frozen manifest가 없으므로 `collect` mode는 실행되지 않는다.
+
+```powershell
+python -m fx_research.v2_1_collection --mode plan
+python -m fx_research.v2_1_collection --mode dry-run
+```
+
 ### 현재 V2 proof-of-concept 결과
 
 24개월 표본에서 전체 110개 Walk-forward 예측을 합쳐 비교하면 기본 RF의 RMSE는 약 `0.003712`, 네트워크 RF는 약 `0.003701`이었다. 차이는 약 0.3%로 매우 작고, 0을 예측하는 기준선의 RMSE가 약 `0.003552`로 더 낮았다. 즉 현재 표본에서는 네트워크 신호의 실질적인 증분가치를 입증하지 못했다. 방향 적중률은 기본 RF 약 48.2%, 네트워크 RF 약 49.1%였다.

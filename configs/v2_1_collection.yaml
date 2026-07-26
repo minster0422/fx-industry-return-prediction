@@ -1,0 +1,74 @@
+collection:
+  version: "0.1.0-draft-scaffold"
+  universe_label: "U0_LEGACY_50"
+  protocol_path: "configs/v2_1_protocol.yaml"
+  ticker_mapping_path: "data/metadata/v2_1_ticker_mapping.csv"
+  frozen_manifest_path: "data/metadata/v2_1_frozen_manifest.yaml"
+  raw_root: "data/raw/v2_1"
+  collection_start: "2010-01-04"
+  collection_end: "2026-06-30"
+  full_collect_enabled: false
+
+schema_sample:
+  date_start: "2026-04-01"
+  date_end: "2026-06-30"
+  fixed_ticker_names:
+    - "현대건설"
+    - "KB금융"
+    - "CJ ENM"
+    - "셀트리온"
+    - "SK하이닉스"
+  maximum_calendar_months: 3
+
+request_policy:
+  timeout_seconds: 30
+  maximum_retries: 3
+  backoff_initial_seconds: 1
+  backoff_multiplier: 2
+  backoff_maximum_seconds: 8
+  maximum_parallel_connections: 4
+  krx_daily_hard_limit: 10000
+  configured_daily_request_budget: 9000
+  retryable_http_statuses: [408, 429, 500, 502, 503, 504]
+  retryable_institution_result_codes: []
+  force_default: false
+
+storage:
+  compression: "gzip"
+  atomic_write: true
+  raw_payloads_committed: false
+  manifest_hash: "sha256"
+  stock_basic_path: "data/raw/v2_1/krx/stock_basic"
+  stock_daily_path: "data/raw/v2_1/krx/stock_daily"
+  index_daily_path: "data/raw/v2_1/krx/index_daily"
+  fx_daily_path: "data/raw/v2_1/ecos/fx_daily"
+  manifests_path: "data/raw/v2_1/manifests"
+  checkpoints_path: "data/raw/v2_1/checkpoints"
+
+planning_assumptions:
+  date_count_rule: "MONDAY_TO_FRIDAY_UPPER_BOUND_NOT_OFFICIAL_TRADING_CALENDAR"
+  krx_requests_are_market_date_level_not_ticker_date_level: true
+  estimated_rows_per_response:
+    kospi_stock_daily: 1000
+    kosdaq_stock_daily: 1900
+    kospi_index_daily: 60
+    kospi_stock_basic: 1000
+    kosdaq_stock_basic: 1900
+  estimated_uncompressed_bytes_per_row:
+    stock_daily: 480
+    index_daily: 300
+    stock_basic: 320
+  estimated_gzip_ratio: 0.35
+  estimated_manifest_bytes_per_request: 400
+  estimated_filtered_u0_bytes_per_row: 160
+
+research_guards:
+  calculate_returns: false
+  generate_targets: false
+  train_models: false
+  generate_predictions: false
+  calculate_performance: false
+  create_results_v2_1: false
+  fluc_rt_research_return_status: "UNRESOLVED_01"
+  sect_tp_nm_industry_use_allowed: false
+  u1_collection_allowed: false

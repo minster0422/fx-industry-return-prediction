@@ -30,3 +30,21 @@ KRX 종목기본정보에서 단축코드는 `ISU_SRT_CD`, ISIN은 `ISU_CD`다. 
 | `CNY_ret` | 원/위안 환율 변화율 |
 
 프로그램은 UTF-8, UTF-8 BOM, CP949를 순서대로 시도하고 종목명 앞뒤 공백을 제거한다. 원시 데이터의 출처와 재배포 권한이 확인되기 전에는 공개 커밋하지 않는다.
+
+## V2.1 로컬 수집 구조
+
+V2.1 수집기 골격은 아래 경로를 사용하도록 고정했으며 전체 경로가 Git에서 제외된다.
+
+```text
+data/raw/v2_1/
+├── krx/
+│   ├── stock_basic/
+│   ├── stock_daily/
+│   └── index_daily/
+├── ecos/
+│   └── fx_daily/
+├── manifests/
+└── checkpoints/
+```
+
+원시 응답은 endpoint·시장·기준일 단위로 분리하고, 임시 파일을 완전히 쓴 뒤 원자적으로 최종 파일명으로 이동한다. manifest에는 SHA-256, schema hash, 행 수, 수집시각과 정제된 상태만 기록한다. checkpoint에는 인증키·URL·header·원시값을 넣지 않는다. 현재 프로토콜이 `DRAFT_NOT_FROZEN`이므로 전체 수집은 코드에서 차단된다.

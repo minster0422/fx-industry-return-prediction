@@ -12,6 +12,9 @@ __pycache__/
 data/raw/*
 !data/raw/.gitkeep
 
+# V2.1 collection payloads, manifests, and resume checkpoints are local-only.
+data/raw/v2_1/
+
 # API payloads, private lookup tables, and runtime request logs stay local.
 data/feasibility_raw/
 data/metadata/private/
