@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use this reconstruction, cite both this repository and the 2025 conference paper."
-title: "FX Sensitivity and Industry Return Prediction: Reconstruction and V2"
+title: "FX Sensitivity and Industry Return Prediction: Reconstruction, V2, and V2.1 Research Scaffold"
 type: software
-version: 0.1.0
-date-released: 2026-07-14
+version: 0.2.0
+date-released: 2026-07-26
 authors:
   - family-names: Lee
     given-names: Minseong
