@@ -27,12 +27,13 @@ data:
   api_key_validity_years: 1
 
 data_feasibility:
-  checked_at: "2026-07-17"
+  checked_at: "2026-07-20"
   evidence_only_not_performance_driven: true
-  KRX_API_KEY_status: "NOT_SET"
+  KRX_API_KEY_status: "SET_VALUE_NOT_RECORDED"
   ECOS_API_KEY_status: "NOT_SET"
   credential_values_recorded: false
-  krx_sample_api_status: "BLOCKED_CREDENTIAL"
+  krx_required_service_approvals_status: "APPROVED_ALL_6"
+  krx_sample_api_status: "COMPLETED_SCHEMA_ONLY"
   feasibility_cli_implemented: true
   feasibility_cli_modes:
     - "metadata"
@@ -41,13 +42,38 @@ data_feasibility:
     - "timestamp_once"
     - "audit"
   feasibility_cli_waits_or_sleeps: false
-  krx_confirmed_ticker_codes: 0
-  krx_ticker_mapping_failures: 50
+  krx_confirmed_ticker_codes: 50
+  krx_ticker_mapping_failures: 0
   krx_nonblank_ticker_code_duplicates: 0
+  krx_basic_info_short_code_field: "ISU_SRT_CD"
+  krx_basic_info_isin_field: "ISU_CD"
+  krx_daily_short_code_field: "ISU_CD"
+  legacy_name_change_match_rule: "EXACT_SAME_6_DIGIT_CODE_AND_ISIN_ONLY"
+  hdc_identity_provenance:
+    legacy_name: "HDC현대산업개발"
+    current_name_at_2026_06_30: "IPARK현대산업개발"
+    ticker_code: "294870"
+    isin_code: "KR7294870001"
+    listing_date: "2018-06-12"
+    evidence_dates: ["2025-12-30", "2026-06-30"]
+  krx_schema_sample:
+    date_start: "2026-04-01"
+    date_end: "2026-06-30"
+    trading_days: 61
+    fixed_stocks: 5
+    stock_rows: 305
+    rows_per_stock: 61
+    kospi_rows: 61
+    duplicate_date_ticker_keys: 0
+    missing_values_by_candidate_field: 0
+    numeric_conversion_failures_by_candidate_field: 0
+    raw_api_types: "string"
+    candidate_fields: ["TDD_CLSPRC", "FLUC_RT", "ACC_TRDVOL", "ACC_TRDVAL", "MKTCAP"]
+    raw_values_persisted_publicly: false
   corporate_action_events_verified: 0
-  corporate_action_status: "BLOCKED_CREDENTIAL_AND_OFFICIAL_ENDPOINT"
+  corporate_action_status: "BLOCKED_OFFICIAL_SOURCE_ENDPOINT"
   corporate_action_official_endpoint_status: "UNRESOLVED"
-  krx_publication_timestamp_status: "BLOCKED_CREDENTIAL"
+  krx_publication_timestamp_status: "OPEN_REQUIRES_3_TRADING_DAY_OBSERVATIONS"
   krx_api_ids_confirmed_from_official_service_pages:
     - "stk_bydd_trd"
     - "ksq_bydd_trd"
@@ -69,6 +95,10 @@ data_feasibility:
 
 universe:
   primary: "legacy_10_sectors_50_stocks_point_in_time_available"
+  primary_label: "U0_LEGACY_50"
+  expansion_candidate: "U1_EXPANDED_10_DEFERRED_TO_V2_2"
+  expansion_adoption_status: "NOT_ADOPTED"
+  expansion_blocker: "HISTORICAL_POINT_IN_TIME_10_SECTOR_MEMBERSHIP_AND_SECURITY_LINEAGE_UNRESOLVED"
   mapping_source: "src/fx_research/constants.py"
   minimum_stocks_per_sector_month: 3
   minimum_daily_coverage_ratio: 0.80

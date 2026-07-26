@@ -12,6 +12,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -77,6 +78,32 @@ TICKER_COLUMNS = (
     "fixed_sample_5",
 )
 
+IDENTITY_PROVENANCE_COLUMNS = (
+    "legacy_ticker_name",
+    "official_name_before",
+    "official_name_after",
+    "ticker_code",
+    "isin_code",
+    "market",
+    "listing_date",
+    "evidence_date_before",
+    "evidence_date_after",
+    "source_endpoint",
+    "matching_rule",
+    "status",
+    "checked_at",
+)
+
+DAILY_TICKER_CODE_FIELD = "ISU_CD"
+BASIC_TICKER_CODE_FIELD = "ISU_SRT_CD"
+DAILY_NUMERIC_FIELDS = {
+    "TDD_CLSPRC": "float",
+    "FLUC_RT": "float",
+    "ACC_TRDVOL": "integer",
+    "ACC_TRDVAL": "integer",
+    "MKTCAP": "integer",
+}
+
 
 class FeasibilityError(RuntimeError):
     """An error whose message is guaranteed not to include a credential."""
@@ -107,6 +134,104 @@ def _legacy_rows() -> list[tuple[str, str]]:
 def _normalize_name(value: object) -> str:
     text = unicodedata.normalize("NFKC", str(value or ""))
     return " ".join(text.split()).casefold()
+
+
+def _read_identity_provenance(path: Path | None) -> dict[str, dict[str, str]]:
+    if path is None or not path.is_file():
+        return {}
+    with path.open(encoding="utf-8", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if not rows:
+        return {}
+    missing_columns = set(IDENTITY_PROVENANCE_COLUMNS) - set(rows[0])
+    if missing_columns:
+        raise FeasibilityError("IDENTITY_PROVENANCE_SCHEMA_MISMATCH")
+    verified: dict[str, dict[str, str]] = {}
+    for row in rows:
+        if row.get("status") != "VERIFIED_CODE_AND_ISIN":
+            continue
+        legacy_name = row.get("legacy_ticker_name", "").strip()
+        ticker_code = row.get("ticker_code", "").strip()
+        isin_code = row.get("isin_code", "").strip()
+        if not legacy_name or not re.fullmatch(r"\d{6}", ticker_code) or not isin_code:
+            raise FeasibilityError("IDENTITY_PROVENANCE_INVALID_VERIFIED_ROW")
+        if legacy_name in verified:
+            raise FeasibilityError("IDENTITY_PROVENANCE_DUPLICATE_LEGACY_NAME")
+        verified[legacy_name] = dict(row)
+    return verified
+
+
+def _fixed_daily_rows(
+    rows: Iterable[Mapping[str, Any]],
+    fixed_codes: Mapping[str, tuple[str, str]],
+) -> list[dict[str, Any]]:
+    selected: list[dict[str, Any]] = []
+    for source_row in rows:
+        code = str(source_row.get(DAILY_TICKER_CODE_FIELD, "")).strip()
+        if re.fullmatch(r"\d{6}", code) and code in fixed_codes:
+            selected.append(dict(source_row))
+    return selected
+
+
+def _daily_stock_key(row: Mapping[str, Any]) -> tuple[str, str]:
+    return (
+        str(row.get("BAS_DD", "")).strip(),
+        str(row.get(DAILY_TICKER_CODE_FIELD, "")).strip(),
+    )
+
+
+def _coerce_daily_numeric_fields(
+    rows: Iterable[Mapping[str, Any]],
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    converted_rows: list[dict[str, Any]] = []
+    summary: dict[str, dict[str, Any]] = {
+        field: {
+            "conversion_failures": 0,
+            "missing_count": 0,
+            "output_type": output_type,
+            "source_types": set(),
+        }
+        for field, output_type in DAILY_NUMERIC_FIELDS.items()
+    }
+    for source_row in rows:
+        converted = dict(source_row)
+        for field, output_type in DAILY_NUMERIC_FIELDS.items():
+            raw = source_row.get(field)
+            if raw is not None:
+                summary[field]["source_types"].add(type(raw).__name__)
+            if _value_missing(raw):
+                converted[field] = math.nan
+                summary[field]["missing_count"] += 1
+                continue
+            text = str(raw).replace(",", "").strip()
+            try:
+                if output_type == "integer":
+                    if not re.fullmatch(r"[+-]?\d+", text):
+                        raise ValueError
+                    value: int | float = int(text)
+                else:
+                    value = float(text)
+                    if not math.isfinite(value):
+                        raise ValueError
+                converted[field] = value
+            except (TypeError, ValueError, OverflowError):
+                converted[field] = math.nan
+                summary[field]["conversion_failures"] += 1
+        converted_rows.append(converted)
+    serializable_summary: dict[str, dict[str, Any]] = {}
+    for field, values in summary.items():
+        serializable_summary[field] = {
+            **values,
+            "source_types": sorted(values["source_types"]),
+        }
+    return converted_rows, serializable_summary
+
+
+def _is_primary_kospi_row(row: Mapping[str, Any]) -> bool:
+    return (
+        _normalize_name(row.get("IDX_CLSS")) == "kospi"
+        and _normalize_name(row.get("IDX_NM")) == _normalize_name("코스피")
+    )
 
 
 def _schema_hash(payload: Any) -> str:
@@ -284,6 +409,8 @@ def _guard_protocol(config_path: Path) -> None:
         raise FeasibilityError("PROTOCOL_NOT_DRAFT")
     if "results_may_run: false" not in text:
         raise FeasibilityError("RESULTS_GUARD_NOT_FALSE")
+    if (config_path.parent.parent / "results" / "v2_1").exists():
+        raise FeasibilityError("RESULTS_V2_1_MUST_BE_ABSENT_FOR_FEASIBILITY")
 
 
 def _krx_url(endpoint_id: str) -> str:
@@ -302,6 +429,7 @@ def _write_ticker_mapping(
     path: Path,
     kospi_rows: Iterable[Mapping[str, Any]],
     kosdaq_rows: Iterable[Mapping[str, Any]],
+    identity_provenance_path: Path | None = None,
 ) -> dict[str, int]:
     official = [dict(row) for row in (*tuple(kospi_rows), *tuple(kosdaq_rows))]
     by_name: dict[str, list[dict[str, Any]]] = {}
@@ -311,6 +439,7 @@ def _write_ticker_mapping(
             if normalized:
                 by_name.setdefault(normalized, []).append(row)
 
+    provenance = _read_identity_provenance(identity_provenance_path)
     output: list[dict[str, str]] = []
     counts = {"mapped": 0, "failed": 0, "ambiguous": 0}
     for sector, ticker in _legacy_rows():
@@ -319,6 +448,22 @@ def _write_ticker_mapping(
             key = (str(candidate.get("ISU_SRT_CD", "")), str(candidate.get("ISU_CD", "")))
             unique[key] = candidate
         candidates = list(unique.values())
+        match_method = "CURRENT_OFFICIAL_NAME"
+        if not candidates and ticker in provenance:
+            identity = provenance[ticker]
+            for candidate in official:
+                if (
+                    str(candidate.get(BASIC_TICKER_CODE_FIELD, "")).strip()
+                    == identity["ticker_code"]
+                    and str(candidate.get("ISU_CD", "")).strip() == identity["isin_code"]
+                ):
+                    key = (
+                        str(candidate.get(BASIC_TICKER_CODE_FIELD, "")),
+                        str(candidate.get("ISU_CD", "")),
+                    )
+                    unique[key] = candidate
+            candidates = list(unique.values())
+            match_method = "VERIFIED_CODE_AND_ISIN_PROVENANCE"
         row = {column: "" for column in TICKER_COLUMNS}
         row.update(
             legacy_sector=sector,
@@ -330,14 +475,22 @@ def _write_ticker_mapping(
         if len(candidates) == 1:
             candidate = candidates[0]
             required = {
-                "ticker_code": str(candidate.get("ISU_SRT_CD", "")).strip(),
+                "ticker_code": str(candidate.get(BASIC_TICKER_CODE_FIELD, "")).strip(),
                 "isin_code": str(candidate.get("ISU_CD", "")).strip(),
                 "market": str(candidate.get("MKT_TP_NM", "")).strip(),
                 "listing_date": str(candidate.get("LIST_DD", "")).strip(),
             }
             if all(required.values()):
                 row.update(required)
-                row["mapping_status"] = "MAPPED_OFFICIAL_CURRENT"
+                row["mapping_status"] = (
+                    "MAPPED_OFFICIAL_IDENTITY_PROVENANCE"
+                    if match_method == "VERIFIED_CODE_AND_ISIN_PROVENANCE"
+                    else "MAPPED_OFFICIAL_CURRENT"
+                )
+                if match_method == "VERIFIED_CODE_AND_ISIN_PROVENANCE":
+                    row["official_source_id"] = (
+                        "KRX_STOCK_BASIC_INFORMATION+V2_1_IDENTITY_PROVENANCE"
+                    )
                 counts["mapped"] += 1
             else:
                 row["mapping_status"] = "UNMAPPED_INCOMPLETE_OFFICIAL_METADATA"
@@ -475,6 +628,7 @@ def run_metadata(config_path: Path) -> dict[str, Any]:
                 root / "data" / "metadata" / "v2_1_ticker_mapping.csv",
                 kospi_rows,
                 kosdaq_rows,
+                root / "data" / "metadata" / "v2_1_ticker_identity_provenance.csv",
             )
             krx_index = client.request_json(
                 endpoint_id="KRX_INDEX_DAILY",
@@ -518,6 +672,11 @@ def _read_fixed_codes(path: Path) -> dict[str, tuple[str, str]]:
         raise FeasibilityError("FIXED_SAMPLE_CHANGED")
     if any(not row.get("ticker_code") or not row.get("market") for row in selected):
         raise FeasibilityError("FIXED_SAMPLE_MAPPING_INCOMPLETE")
+    codes = [row["ticker_code"].strip() for row in selected]
+    if any(not re.fullmatch(r"\d{6}", code) for code in codes):
+        raise FeasibilityError("FIXED_SAMPLE_CODE_INVALID")
+    if len(codes) != len(set(codes)):
+        raise FeasibilityError("FIXED_SAMPLE_CODE_DUPLICATE")
     return {
         row["ticker_code"]: (row["legacy_ticker_name"], row["market"])
         for row in selected
@@ -556,9 +715,7 @@ def run_schema_sample(config_path: Path) -> dict[str, Any]:
                         headers={"AUTH_KEY": key},
                         body={"basDd": bas_dd},
                     )
-                    for row in _krx_rows(response):
-                        if str(row.get("ISU_SRT_CD", "")) in fixed:
-                            observations.append(row)
+                    observations.extend(_fixed_daily_rows(_krx_rows(response), fixed))
                 response = client.request_json(
                     endpoint_id=f"KRX_KOSPI_INDEX_DAILY_{bas_dd}",
                     url=_krx_url("kospi_index_daily"),
@@ -569,25 +726,37 @@ def run_schema_sample(config_path: Path) -> dict[str, Any]:
                 matches = [
                     row
                     for row in _krx_rows(response)
-                    if _normalize_name(row.get("IDX_NM")) in {_normalize_name("코스피"), "kospi"}
+                    if _is_primary_kospi_row(row)
                 ]
                 index_observations.extend(matches)
             day += timedelta(days=1)
     except FeasibilityError as exc:
         return {"mode": "schema_sample", "status": "BLOCKED_SERVICE_OR_SCHEMA", "reason": str(exc)}
 
-    candidate_fields = ("TDD_CLSPRC", "FLUC_RT", "ACC_TRDVOL", "ACC_TRDVAL", "MKTCAP")
+    _, conversion_summary = _coerce_daily_numeric_fields(observations)
+    candidate_fields = tuple(DAILY_NUMERIC_FIELDS)
     field_summary: dict[str, Any] = {}
     for field in candidate_fields:
-        missing = sum(_value_missing(row.get(field)) for row in observations)
-        types = sorted({type(row.get(field)).__name__ for row in observations if row.get(field) is not None})
+        details = conversion_summary[field]
         field_summary[field] = {
             "corporate_action_adjustment": "UNRESOLVED_01",
-            "data_types_observed": types,
-            "missing_rate": missing / len(observations) if observations else None,
-            "official_unit": "UNRESOLVED_SPEC",
+            "conversion_failures": details["conversion_failures"],
+            "data_types_observed": details["source_types"],
+            "missing_rate": details["missing_count"] / len(observations) if observations else None,
+            "numeric_output_type": details["output_type"],
+            "official_unit": {
+                "TDD_CLSPRC": "KRW",
+                "FLUC_RT": "percent",
+                "ACC_TRDVOL": "shares",
+                "ACC_TRDVAL": "KRW",
+                "MKTCAP": "KRW",
+            }[field],
         }
-    keys = [(str(row.get("BAS_DD", "")), str(row.get("ISU_SRT_CD", ""))) for row in observations]
+    keys = [_daily_stock_key(row) for row in observations]
+    rows_by_ticker = {
+        code: sum(str(row.get(DAILY_TICKER_CODE_FIELD, "")) == code for row in observations)
+        for code in fixed
+    }
     summary = {
         "date_end": end.isoformat(),
         "date_start": start.isoformat(),
@@ -598,9 +767,13 @@ def run_schema_sample(config_path: Path) -> dict[str, Any]:
         "index_rows": len(index_observations),
         "mode": "schema_sample",
         "raw_values_persisted_publicly": False,
+        "rows_by_ticker": rows_by_ticker,
         "status": "COMPLETED_SCHEMA_ONLY",
         "stock_rows": len(observations),
     }
+    # Re-check immediately before the only write in this mode.  This prevents a
+    # concurrent or accidental results run from coexisting with feasibility output.
+    _guard_protocol(config_path)
     private_path = root / "data" / "metadata" / "private" / "schema_sample_summary.json"
     private_path.parent.mkdir(parents=True, exist_ok=True)
     private_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
