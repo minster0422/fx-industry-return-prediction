@@ -21,6 +21,7 @@ dependencies = [
 
 [project.scripts]
 fx-research = "fx_research.cli:main"
+fx-v2-1-archive = "fx_research.v2_1_archive:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

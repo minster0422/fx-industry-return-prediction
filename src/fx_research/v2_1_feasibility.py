@@ -27,6 +27,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
+import yaml
+
 from .constants import SECTOR_STOCKS
 
 KST = ZoneInfo("Asia/Seoul")
@@ -944,24 +946,66 @@ def run_audit(config_path: Path) -> dict[str, Any]:
     checks["yaml_parse_detail"] = yaml_detail
     if collection_config_path.is_file():
         collection_config = collection_config_path.read_text(encoding="utf-8")
+        collection_payload = yaml.safe_load(collection_config)
+        archive_only = (
+            collection_payload.get("archive_only", {})
+            if isinstance(collection_payload, dict)
+            else {}
+        )
+        raw_root_exists = (root / "data" / "raw" / "v2_1").exists()
         checks["collection_full_collect_disabled"] = "full_collect_enabled: false" in collection_config
         checks["collection_u1_disabled"] = "u1_collection_allowed: false" in collection_config
         checks["collection_results_guard_false"] = "create_results_v2_1: false" in collection_config
-        checks["collection_raw_root_absent"] = not (root / "data" / "raw" / "v2_1").exists()
+        checks["collection_archive_only_enabled"] = archive_only.get("enabled") is True
+        checks["collection_archive_derivations_disabled"] = all(
+            archive_only.get(key) is False
+            for key in (
+                "calculate_returns",
+                "generate_targets",
+                "train_models",
+                "generate_predictions",
+                "calculate_performance",
+                "create_results_v2_1",
+                "normalize_u0_panel",
+            )
+        )
+        checks["collection_raw_root_absent"] = not raw_root_exists
+        checks["collection_raw_root_policy_compliant"] = (
+            not raw_root_exists
+            or (
+                checks["collection_archive_only_enabled"]
+                and archive_only.get("raw_payloads_local_only") is True
+                and checks["collection_archive_derivations_disabled"]
+            )
+        )
     else:
         checks["collection_full_collect_disabled"] = True
         checks["collection_u1_disabled"] = True
         checks["collection_results_guard_false"] = True
+        checks["collection_archive_only_enabled"] = False
+        checks["collection_archive_derivations_disabled"] = True
         checks["collection_raw_root_absent"] = True
+        checks["collection_raw_root_policy_compliant"] = True
 
-    public_paths = [
-        path
-        for path in root.rglob("*")
-        if path.is_file()
-        and ".git" not in path.parts
-        and ".venv" not in path.parts
-        and "__pycache__" not in path.parts
-    ]
+    private_scan_prefixes = (
+        "data/raw/",
+        "data/feasibility_raw/",
+        "data/metadata/private/",
+        "data/metadata/api_logs/",
+    )
+    public_paths: list[Path] = []
+    for path in root.rglob("*"):
+        if (
+            not path.is_file()
+            or ".git" in path.parts
+            or ".venv" in path.parts
+            or "__pycache__" in path.parts
+        ):
+            continue
+        relative = path.relative_to(root).as_posix()
+        if relative.startswith(private_scan_prefixes):
+            continue
+        public_paths.append(path)
     checks["suspicious_credential_assignments"] = _credential_scan(public_paths)
     try:
         git = shutil.which("git") or "git"
@@ -1012,7 +1056,8 @@ def run_audit(config_path: Path) -> dict[str, Any]:
         checks["collection_full_collect_disabled"],
         checks["collection_u1_disabled"],
         checks["collection_results_guard_false"],
-        checks["collection_raw_root_absent"],
+        checks["collection_archive_derivations_disabled"],
+        checks["collection_raw_root_policy_compliant"],
         checks["suspicious_credential_assignments"] == 0,
         checks["tracked_forbidden_files"] == [],
         checks["git_diff_check"],
