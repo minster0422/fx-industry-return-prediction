@@ -935,11 +935,24 @@ def run_audit(config_path: Path) -> dict[str, Any]:
         row["mapping_label"] in {"exact", "partial", "unavailable"} for row in index_rows
     )
 
-    yaml_ok, yaml_detail = _yaml_parse_status(
-        [config_path, root / "data" / "metadata" / "v2_1_source_registry.yaml"]
-    )
+    yaml_paths = [config_path, root / "data" / "metadata" / "v2_1_source_registry.yaml"]
+    collection_config_path = root / "configs" / "v2_1_collection.yaml"
+    if collection_config_path.is_file():
+        yaml_paths.append(collection_config_path)
+    yaml_ok, yaml_detail = _yaml_parse_status(yaml_paths)
     checks["yaml_parse"] = yaml_ok
     checks["yaml_parse_detail"] = yaml_detail
+    if collection_config_path.is_file():
+        collection_config = collection_config_path.read_text(encoding="utf-8")
+        checks["collection_full_collect_disabled"] = "full_collect_enabled: false" in collection_config
+        checks["collection_u1_disabled"] = "u1_collection_allowed: false" in collection_config
+        checks["collection_results_guard_false"] = "create_results_v2_1: false" in collection_config
+        checks["collection_raw_root_absent"] = not (root / "data" / "raw" / "v2_1").exists()
+    else:
+        checks["collection_full_collect_disabled"] = True
+        checks["collection_u1_disabled"] = True
+        checks["collection_results_guard_false"] = True
+        checks["collection_raw_root_absent"] = True
 
     public_paths = [
         path
@@ -963,6 +976,7 @@ def run_audit(config_path: Path) -> dict[str, Any]:
             errors="replace",
         ).stdout.splitlines()
         forbidden_prefixes = (
+            "data/raw/v2_1/",
             "data/feasibility_raw/",
             "data/metadata/private/",
             "data/metadata/api_logs/",
@@ -995,6 +1009,10 @@ def run_audit(config_path: Path) -> dict[str, Any]:
         checks["index_rows_10"],
         checks["index_labels_allowed"],
         checks["yaml_parse"],
+        checks["collection_full_collect_disabled"],
+        checks["collection_u1_disabled"],
+        checks["collection_results_guard_false"],
+        checks["collection_raw_root_absent"],
         checks["suspicious_credential_assignments"] == 0,
         checks["tracked_forbidden_files"] == [],
         checks["git_diff_check"],
