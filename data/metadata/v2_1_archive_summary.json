@@ -1,0 +1,110 @@
+{
+  "approval": {
+    "end": "2027-07-19",
+    "start": "2026-07-20"
+  },
+  "archive_version": "0.2.1-archive-only",
+  "endpoint_summary": {
+    "kosdaq_stock_basic": {
+      "completed_requests": 1,
+      "first_bas_dd": "20260630",
+      "gzip_bytes": 81036,
+      "last_bas_dd": "20260630",
+      "nonempty_responses": 1,
+      "nonstandard_result_code_count": 0,
+      "raw_bytes": 561876,
+      "schema_hash_count": 1,
+      "total_rows": 1824
+    },
+    "kosdaq_stock_daily": {
+      "completed_requests": 4302,
+      "first_bas_dd": "20100104",
+      "gzip_bytes": 313460516,
+      "last_bas_dd": "20260630",
+      "nonempty_responses": 4059,
+      "nonstandard_result_code_count": 0,
+      "raw_bytes": 1747800786,
+      "schema_hash_count": 2,
+      "total_rows": 5366619
+    },
+    "kospi_index_daily": {
+      "completed_requests": 4302,
+      "first_bas_dd": "20100104",
+      "gzip_bytes": 12546067,
+      "last_bas_dd": "20260630",
+      "nonempty_responses": 4059,
+      "nonstandard_result_code_count": 0,
+      "raw_bytes": 53120063,
+      "schema_hash_count": 2,
+      "total_rows": 193926
+    },
+    "kospi_stock_basic": {
+      "completed_requests": 1,
+      "first_bas_dd": "20260630",
+      "gzip_bytes": 40487,
+      "last_bas_dd": "20260630",
+      "nonempty_responses": 1,
+      "nonstandard_result_code_count": 0,
+      "raw_bytes": 278973,
+      "schema_hash_count": 1,
+      "total_rows": 945
+    },
+    "kospi_stock_daily": {
+      "completed_requests": 4302,
+      "first_bas_dd": "20100104",
+      "gzip_bytes": 209338164,
+      "last_bas_dd": "20260630",
+      "nonempty_responses": 4059,
+      "nonstandard_result_code_count": 0,
+      "raw_bytes": 1160166280,
+      "schema_hash_count": 2,
+      "total_rows": 3738154
+    }
+  },
+  "generated_at_utc": "2026-07-28T01:28:52.877977+00:00",
+  "integrity": {
+    "attempt_counts_by_kst_date": {
+      "2026-07-26": 2066,
+      "2026-07-27": 8750,
+      "2026-07-28": 2131
+    },
+    "completed_records": 12908,
+    "local_manifest_sha256": "c980b61316779677c125a95f35d38b89f4fc5d95ed9d95501824da85946dd6c5",
+    "planned_requests": 12908,
+    "remaining_requests": 0,
+    "valid_raw_files": 12908
+  },
+  "publication_boundary": {
+    "credentials_committed": false,
+    "models_trained": false,
+    "performance_calculated": false,
+    "predictions_generated": false,
+    "raw_payloads_committed": false,
+    "request_level_manifest_committed": false,
+    "results_v2_1_created": false,
+    "returns_generated": false,
+    "targets_generated": false
+  },
+  "purpose": "RAW_ARCHIVE_ONLY_NO_RESEARCH_DERIVATIONS",
+  "scope": {
+    "allowed_endpoints": [
+      "kosdaq_stock_basic",
+      "kosdaq_stock_daily",
+      "kospi_index_daily",
+      "kospi_stock_basic",
+      "kospi_stock_daily"
+    ],
+    "collection_end": "2026-06-30",
+    "collection_start": "2010-01-04",
+    "universe": "U0_LEGACY_50",
+    "weekday_candidate_rule": "MONDAY_TO_FRIDAY_UPPER_BOUND_NOT_OFFICIAL_TRADING_CALENDAR"
+  },
+  "source": {
+    "institution": "Korea Exchange",
+    "official_service_list_url": "https://openapi.krx.co.kr/contents/OPP/INFO/service/OPPINFO004.cmd",
+    "official_terms_effective_date": "2025-12-26",
+    "official_terms_url": "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp",
+    "service": "KRX Data Marketplace OPEN API"
+  },
+  "status": "COMPLETE"
+}
