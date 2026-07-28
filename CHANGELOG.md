@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.2.1] - 2026-07-28
+
+### Added
+
+- 연구 파생을 전부 차단한 KRX archive-only 수집기와 명시적 실행 gate
+- KST 일일 quota, 250회 reserve, SQLite checkpoint, SHA-256 재검증, 단일 프로세스 lock과 원자적 저장
+- 2010-01-04~2026-06-30 KRX 원응답 계획 12,908건의 로컬 보존 완료
+- endpoint별 요청·행·용량과 local manifest 해시만 담은 공개 archive 요약
+- archive 범위·완결성·이용조건·공개 경계를 정리한 보존 보고서
+- invalid JSON 재시도, 잘못된 기존 파일 거부, 중복 실행 차단과 파생 기능 금지 회귀 테스트
+
+### Verified
+
+- 완료 checkpoint 12,908건과 유효 gzip 원본 12,908건 일치, 남은 요청 0건
+- 총 9,301,468행, gzip 535,466,270 bytes, 비압축 2,961,927,978 bytes
+- 수익률, target, 모델, 예측, 성능, 백테스트와 `results/v2_1/` 미생성
+- 인증키·원자료·요청별 manifest·checkpoint는 Git 추적 대상이 아님
+
+### Not included
+
+- 기업행사 조정이나 공개시각을 임의 가정한 연구용 변환
+- ECOS 운영 수집
+- V2.1 프로토콜 동결과 실증 결과
+
 ## [0.2.0] - 2026-07-26
 
 ### Added

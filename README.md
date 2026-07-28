@@ -10,11 +10,12 @@
 
 | 범위 | 상태 |
 |---|---|
-| 포트폴리오 릴리스 `v0.2.0` | **완료** — 2025 재구성, 불일치 감사, V2 기준선, V2.1 사전등록·데이터 가능성 시험·수집기 골격 |
+| 포트폴리오 릴리스 `v0.2.1` | **완료** — 2025 재구성, 불일치 감사, V2 기준선, V2.1 사전등록·데이터 가능성 시험·KRX 원자료 보존 |
+| KRX archive-only | **완료** — 2010-01-04~2026-06-30 계획 12,908건과 유효 원본 12,908건 일치 |
 | V2 proof-of-concept | **완료** — 24개월 표본에서 네트워크 증분가치 미확인 |
 | V2.1 장기 데이터 실증 | **향후 연구** — 공식 기업행사·공개시각·산업분류·재배포 근거 확보 전까지 미실행 |
 
-채용·포트폴리오 관점의 핵심 요약은 [`docs/PORTFOLIO_SUMMARY.md`](docs/PORTFOLIO_SUMMARY.md)에 정리했다. 현재 릴리스는 미완성 실증을 완성된 결과처럼 제시하지 않는다. 대신 원래 아이디어, 재현 감사, 음의 기준선 결과, 사전등록과 안전한 데이터 수집 설계까지를 검증 가능한 산출물로 마무리한다.
+채용·포트폴리오 관점의 핵심 요약은 [`docs/PORTFOLIO_SUMMARY.md`](docs/PORTFOLIO_SUMMARY.md)에 정리했다. 현재 릴리스는 미완성 실증을 완성된 결과처럼 제시하지 않는다. 대신 원래 아이디어, 재현 감사, 음의 기준선 결과, 사전등록, 안전한 수집 설계와 원자료 보존 완료까지를 검증 가능한 산출물로 마무리한다.
 
 ## 프로젝트 한눈에 보기
 
@@ -84,11 +85,13 @@ Python과 R의 Random Forest 구현 차이 때문에 예측 숫자를 완전히 
 
 V2는 완성된 투자모형이 아니라, 원래 아이디어를 검증 가능한 연구문제로 바꾸는 첫 기준선이다. 장기 데이터와 통계적 유의성 검정이 추가되어야 한다.
 
-### V2.1 현재 단계 — 사전등록 프로토콜 초안
+### V2.1 현재 단계 — 사전등록 초안과 원자료 보존 완료
 
-V2.1은 **아직 전체 데이터 수집·모델 학습·성능 평가 전**이다. 결과를 보기 전에 표본, 다음 달 산업 초과수익률 타깃, 60개월 rolling 학습창, M0~M4 비교, paired MAE, month-block bootstrap, 실패 판정 규칙을 [`docs/V2_1_PROTOCOL.md`](docs/V2_1_PROTOCOL.md)와 [`configs/v2_1_protocol.yaml`](configs/v2_1_protocol.yaml)에 고정했다.
+V2.1은 **원자료 보존은 완료했지만 연구용 변환·모델 학습·성능 평가 전**이다. 결과를 보기 전에 표본, 다음 달 산업 초과수익률 타깃, 60개월 rolling 학습창, M0~M4 비교, paired MAE, month-block bootstrap, 실패 판정 규칙을 [`docs/V2_1_PROTOCOL.md`](docs/V2_1_PROTOCOL.md)와 [`configs/v2_1_protocol.yaml`](configs/v2_1_protocol.yaml)에 고정했다.
 
 2026-07-20 기준 KRX 인증과 6개 서비스 승인을 완료했고, U0 Legacy-50을 공식 코드로 50/50 식별했다. 명칭이 바뀐 HDC/IPARK현대산업개발은 동일 코드·ISIN provenance로만 연결했으며, 고정 5종목의 2026-04-01~06-30 일별 시세 305행과 KOSPI 61행에서 결측·중복·숫자 변환 실패가 모두 0임을 확인했다. U1 Expanded-10은 과거 업종 구성·종목 계보·기업행사 조정 문제가 남아 V2.2 후보로 이관한다. 기업행사 조정, KRX·ECOS 공개시각 관측, KRX 산업지수 구성 정의가 미해결이므로 상태는 `DRAFT — NOT FROZEN`이며 V2.1 target·예측·성능 결과는 아직 생성하지 않는다.
+
+공식 서비스의 2010년 이후 제공 범위와 1일 10,000회 한도 안에서, 연구 파생을 완전히 끈 archive-only 경로로 2010-01-04~2026-06-30의 KOSPI·KOSDAQ 일별 시세, KOSPI 지수와 종료일 종목기본정보를 로컬에 보존했다. 계획 12,908건, 유효 gzip 원본 12,908건, 총 9,301,468행, 남은 요청 0건이다. 원자료와 요청별 manifest는 Git에서 제외하고 공개 가능한 집계만 [`docs/V2_1_ARCHIVE_REPORT.md`](docs/V2_1_ARCHIVE_REPORT.md)와 [`data/metadata/v2_1_archive_summary.json`](data/metadata/v2_1_archive_summary.json)에 기록했다.
 
 데이터 가능성 점검은 별도 제한 CLI로 실행한다. 이 명령은 모델이나 `results/v2_1/`을 생성하지 않는다.
 
@@ -98,11 +101,12 @@ python -m fx_research.v2_1_feasibility `
   --mode audit
 ```
 
-U0 전체수집 전 계획과 dry-run은 별도 수집기 골격으로 확인한다. 2026-07-20 계획 기준 평일 후보일 4,302일, KRX 요청 상한 12,908회, KRX 로컬 저장 추정 약 2.16GB이며 실제 거래일·응답 크기·압축률에 따라 달라진다. ECOS 4개 계열은 평일 행 상한 17,208행만 표시하고, 호출 수·원시 저장량은 UNRESOLVED-03이 닫히기 전 추정하지 않는다. 프로토콜 동결과 frozen manifest가 없으므로 `collect` mode는 실행되지 않는다.
+연구용 `collect` 경로는 프로토콜 동결과 frozen manifest가 없으므로 계속 차단한다. 별도의 archive-only 경로만 명시적 실행 플래그, endpoint allowlist, 파생 산출물 금지, 일일 quota와 재시작 checkpoint를 전제로 사용했다. ECOS 4개 계열은 공개시각·수정정책이 미확정이어서 이번 보존 범위에 포함하지 않았다.
 
 ```powershell
 python -m fx_research.v2_1_collection --mode plan
 python -m fx_research.v2_1_collection --mode dry-run
+python -m fx_research.v2_1_archive --mode status
 ```
 
 ### 현재 V2 proof-of-concept 결과
@@ -164,15 +168,17 @@ results/generated/
 - [`docs/V2_1_DECISION_LOG.md`](docs/V2_1_DECISION_LOG.md): 주 분석 선택, 대안, 미해결 항목과 동결 이력
 - [`docs/V2_1_DATA_DICTIONARY.md`](docs/V2_1_DATA_DICTIONARY.md): 필드별 단위·원천·관측 가능 시점·변환식
 - [`docs/V2_1_DATA_FEASIBILITY.md`](docs/V2_1_DATA_FEASIBILITY.md): 공식 API·기업행사·공개시각·산업지수 가능성 감사
+- [`docs/V2_1_ARCHIVE_REPORT.md`](docs/V2_1_ARCHIVE_REPORT.md): 12,908건 KRX 원자료 보존 범위·완결성·공개 경계
 - [`archive_2025/README.md`](archive_2025/README.md): 2025 공개 산출물의 보존 원칙
 
 ## 버전 정책
 
 - `v0.1 / V2 proof-of-concept`: 2025 연구의 재구성, 오류 감사, 24개월 데이터 실행 결과를 보존한다.
-- `v0.2 / portfolio release`: V2.1 사전등록, 공식 U0 매핑, 제한 스키마 검증과 동결 전 전체수집을 차단하는 수집기 골격까지 공개한다.
+- `v0.2.0 / portfolio release`: V2.1 사전등록, 공식 U0 매핑, 제한 스키마 검증과 동결 전 연구수집을 차단하는 수집기 골격을 공개한다.
+- `v0.2.1 / archive completion`: 파생 산출물을 만들지 않는 별도 경로로 KRX 원자료를 로컬에 완전 보존하고 공개 집계·무결성 증거만 공개한다.
 - `V2.1`: 최소 5년의 장기·최신 데이터, 명확한 초과수익률 타깃, 강한 기준모형과 불확실성 검정을 갖춘 후속 연구로 분리한다.
 
-V2.1을 기다리며 현재 결과를 감추거나 덮어쓰지 않는다. `v0.2.0`은 포트폴리오 릴리스로 완결하고, 장기 데이터 실증은 공식 근거와 프로토콜 동결 조건이 충족될 때 같은 저장소에서 비교 가능한 후속 버전으로 재개한다. 변경 내역은 [`CHANGELOG.md`](CHANGELOG.md)에 기록한다.
+V2.1을 기다리며 현재 결과를 감추거나 덮어쓰지 않는다. `v0.2.1`은 포트폴리오와 데이터 보존 릴리스로 완결하고, 장기 데이터 실증은 공식 근거와 프로토콜 동결 조건이 충족될 때 같은 저장소에서 비교 가능한 후속 버전으로 재개한다. 변경 내역은 [`CHANGELOG.md`](CHANGELOG.md)에 기록한다.
 
 ## 논문
 

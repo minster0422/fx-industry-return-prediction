@@ -3,12 +3,27 @@
 ## 상태
 
 - 작성일: 2026-07-20
+- archive 완료일: 2026-07-28
 - 대상: `U0_LEGACY_50`과 KOSPI
 - 프로토콜: `DRAFT_NOT_FROZEN`
-- 전체수집: `BLOCKED`
+- 연구용 전체수집: `BLOCKED`
+- 파생 없는 KRX archive-only: `COMPLETE`
 - 수익률·target·model·prediction·performance: 생성 금지
 
-이 문서는 전체 데이터를 받기 전에 API 요청량, 저장 구조, 재시작 규칙과 실행 gate를 고정한다. 숫자는 수익률이나 예측결과를 사용하지 않은 공학적 계획치다.
+이 문서는 전체 데이터를 받기 전에 API 요청량, 저장 구조, 재시작 규칙과 실행 gate를 고정했다. 숫자는 수익률이나 예측결과를 사용하지 않은 공학적 계획치다. 이후 별도의 archive-only 경로로 원응답만 보존했으며 연구용 변환과 `collect` gate는 그대로 차단했다.
+
+## archive-only 완료 결과
+
+| 항목 | 계획 | 완료 |
+|---|---:|---:|
+| KRX 요청 | 12,908 | 12,908 |
+| 유효 gzip 원본 | 12,908 | 12,908 |
+| 남은 요청 | 0 | 0 |
+| 총 행 수 | 계획하지 않음 | 9,301,468 |
+| 비압축 bytes | 6,066,748,000 추정 | 2,961,927,978 |
+| gzip bytes | 2,123,361,800 추정 | 535,466,270 |
+
+계획치와 실측치의 차이는 기간·표본·필드·연구모형 변경에 사용하지 않았다. 상세 endpoint 집계, 일별 시도 수와 무결성 해시는 [`V2_1_ARCHIVE_REPORT.md`](V2_1_ARCHIVE_REPORT.md)에 보존한다.
 
 ## 계획치
 
@@ -57,6 +72,8 @@ KRX 일별 API는 종목별 요청이 아니라 시장·기준일별 응답이�
 | 동시 연결 | 4개 |
 | KRX 공식 일일 한도 | 10,000회 |
 | 연구 수집 일일 예산 | 9,000회, 한도의 90% |
+| archive 미추적 요청 reserve | 250회 |
+| archive 실행 가능 예산 | 8,750회 |
 | retry HTTP | 408, 429, 500, 502, 503, 504 |
 | 기관 result code 재시도 | 없음; 공식 코드가 별도 등록되기 전 자동 재시도 금지 |
 
@@ -83,16 +100,18 @@ python -m fx_research.v2_1_collection --mode plan
 python -m fx_research.v2_1_collection --mode dry-run
 python -m fx_research.v2_1_collection --mode schema-sample
 python -m fx_research.v2_1_collection --mode collect
+python -m fx_research.v2_1_archive --mode status
 ```
 
 - `plan`: 네트워크와 파일 쓰기 없이 요청·행·저장량 상한 출력
 - `dry-run`: U0·기간·guard·경로를 검증하되 네트워크와 파일 쓰기 없음
 - `schema-sample`: 기본적으로 `READY_NOT_EXECUTED`; 명시적 `--execute-schema-sample`에서만 기존 고정 5종목·3개월 feasibility에 위임
 - `collect`: 현재 `BLOCKED_PROTOCOL_NOT_FROZEN`. 프로토콜을 임의로 FROZEN으로 바꾸더라도 설정 enable, frozen manifest 해시와 별도 실행 승인이 모두 없으면 차단
+- `v2_1_archive`: 연구 파생 기능을 모두 끈 별도 local-only 보존 경로. 2026-07-28 `COMPLETE`; 이후 기본 명령은 상태·해시 확인만 수행
 
 ## 전체수집 해제 조건
 
-현재 scaffold는 다음 조건을 모두 확인하도록 구현했으나 마지막 실행은 의도적으로 허가하지 않는다.
+현재 연구용 scaffold는 다음 조건을 모두 확인하도록 구현했으나 마지막 실행은 의도적으로 허가하지 않는다. archive-only 완료는 이 조건을 우회하거나 종료하지 않는다.
 
 1. `results/v2_1/` 부재
 2. U0 50종목 공식 매핑·순서·중복 검증 통과
@@ -102,4 +121,4 @@ python -m fx_research.v2_1_collection --mode collect
 6. 공식 기업행사 조정 규칙과 공개시각 lag 규칙 반영
 7. 사용자 별도 승인과 수집 실행 코드 검토
 
-지금 단계에서 가능한 다음 외부 작업은 KRX 문의 답변 확보, KRX·ECOS 3거래일 공개시각 관측과 ECOS 운영키 준비다. 이 문서 작성 과정에서 API 요청, 원자료 파일, 수익률, target, 모델, 예측, 성능 및 `results/v2_1/`은 생성하지 않았다.
+지금 단계에서 가능한 다음 외부 작업은 KRX 문의 답변 확보, KRX·ECOS 3거래일 공개시각 관측과 ECOS 운영키 준비다. archive-only 단계에서는 KRX 원자료 파일만 로컬에 생성했다. 수익률, target, 모델, 예측, 성능 및 `results/v2_1/`은 생성하지 않았다.

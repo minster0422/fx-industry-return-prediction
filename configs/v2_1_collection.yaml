@@ -1,5 +1,5 @@
 collection:
-  version: "0.1.0-draft-scaffold"
+  version: "0.2.1-archive-only"
   universe_label: "U0_LEGACY_50"
   protocol_path: "configs/v2_1_protocol.yaml"
   ticker_mapping_path: "data/metadata/v2_1_ticker_mapping.csv"
@@ -8,6 +8,41 @@ collection:
   collection_start: "2010-01-04"
   collection_end: "2026-06-30"
   full_collect_enabled: false
+
+archive_only:
+  enabled: true
+  purpose: "RAW_ARCHIVE_ONLY_NO_RESEARCH_DERIVATIONS"
+  raw_payloads_local_only: true
+  calculate_returns: false
+  generate_targets: false
+  train_models: false
+  generate_predictions: false
+  calculate_performance: false
+  create_results_v2_1: false
+  normalize_u0_panel: false
+  untracked_request_reserve: 250
+  state_database: "checkpoints/krx_archive_state.sqlite3"
+  public_summary_path: "data/metadata/v2_1_archive_summary.json"
+  official_terms_url: "https://openapi.krx.co.kr/contents/OPP/INFO/OPPINFO002.jsp"
+  official_terms_effective_date: "2025-12-26"
+  approval_start: "2026-07-20"
+  approval_end: "2027-07-19"
+  allowed_endpoints:
+    - "kosdaq_stock_basic"
+    - "kosdaq_stock_daily"
+    - "kospi_index_daily"
+    - "kospi_stock_basic"
+    - "kospi_stock_daily"
+  probe_dates:
+    - "2010-01-04"
+    - "2015-12-30"
+    - "2020-12-30"
+    - "2025-12-30"
+    - "2026-06-30"
+  probe_endpoints:
+    - "kospi_stock_daily"
+    - "kosdaq_stock_daily"
+    - "kospi_index_daily"
 
 schema_sample:
   date_start: "2026-04-01"
